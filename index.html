@@ -165,7 +165,7 @@ aside {
 
       <p> Functions are
       \[
-      f_1 (x) = a_1 e^{-a_2 x}
+      f_1 (x) = a_1 e^{ a_2 x}
       \]
       \[
       f_2 (x) = b_1 \ln (b_2 (x + 1) )
@@ -174,32 +174,32 @@ aside {
       f_3 (x) = c_1 (\frac{x}{2} - c_2)^{3}
       \]
       \[
-      f_4 (x) = d_1 ( \frac{x}{2} - d_2)^{4}
+      f_4 (x) = d_1 \sin ( d_2 x )
       \]
       </p>
       <p>
       <label for=a1> a1 </label>
-      <input type="range" min = -3 max = 3 step = 0.01 id="a1" value=".5" oninput="redraw()" class="slider-width">
+      <input type="range" min = -1 max = 1 step = 0.01 id="a1" value=".5" oninput="redraw()" class="slider-width">
       <label for=a2> a2 </label>
-      <input type="range" min = 0.5 max = 1.5 step = 0.01 id="a2" value="1" oninput="redraw()" class="slider-width">
+      <input type="range" min = 0.1 max = .5 step = 0.01 id="a2" value="0.2" oninput="redraw()" class="slider-width">
       </p>
       <p>
       <label for=b1> b1 </label>
-      <input type="range" min = -3 max = 3 step = 0.01 id="b1" value=".5" oninput="redraw()" class="slider-width">
+      <input type="range" min = -1 max = 1 step = 0.01 id="b1" value=".5" oninput="redraw()" class="slider-width">
       <label for=b2> b2 </label>
       <input type="range" min = 0.5 max = 5 step = 0.01 id="b2" value="1" oninput="redraw()" class="slider-width">
       </p>
       <p>
       <label for=c1> c1 </label>
-      <input type="range" min = -3 max = 3 step = 0.01 id="c1" value=".5" oninput="redraw()" class="slider-width">
+      <input type="range" min = -1 max = 1 step = 0.01 id="c1" value=".5" oninput="redraw()" class="slider-width">
       <label for=c2> c2 </label>
       <input type="range" min = 0 max = 5 step = 0.01 id="c2" value="1.5" oninput="redraw()" class="slider-width">
       </p>
       <p>
       <label for=d1> d1 </label>
-      <input type="range" min = -3 max = 3 step = 0.01 id="d1" value=".5" oninput="redraw()" class="slider-width">
+      <input type="range" min = -4 max = 4 step = 0.01 id="d1" value="2" oninput="redraw()" class="slider-width">
       <label for=d2> d2 </label>
-      <input type="range" min = 0 max = 5 step = 0.01 id="d2" value="3.5" oninput="redraw()" class="slider-width">
+      <input type="range" min = 1 max = 5 step = 0.01 id="d2" value="2" oninput="redraw()" class="slider-width">
       </p>
       <div id="demoarea">
       </div>
@@ -279,16 +279,13 @@ var functionG = svg.append("g");
 var graphF = line.interpolate("linear")
                  .x(function(d) { return xScale(d[0]); })
                  .y(function(d) { return yScale(d[1]); });
-functionG.append("path").attr("d", graphF(fVals))
-                  .attr("fill", "none")
-                  .attr("stroke", "black");
 
 redraw();
 
 function f(a1, a2, b1, b2, c1, c2, d1, d2, x) {
   console.log()
-  return a1*Math.exp(-a2*x) + b1*Math.log(b2*(x + 1))
-        + c1*Math.pow((x - c2)/2, 3) + d1*Math.pow((x - d2)/2, 4);
+  return a1*Math.exp(a2*x) + b1*Math.log(b2*(x + 1))
+        + c1*Math.pow((x - c2)/2, 3) + d1*Math.sin(d2*x);
 }
 
 function redraw() {
@@ -331,7 +328,7 @@ function redraw() {
 
   functionG.append("path").attr("d", graphF(fVals))
                   .attr("fill", "none")
-                  .attr("stroke", "black");
+                  .attr("stroke", "blue");
 }
 
 
