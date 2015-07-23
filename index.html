@@ -230,6 +230,8 @@ var data = [];
 var fVals = [];
 var n = 100; // Number of points to draw function
 var nData = 10; // Number of sampled points
+var a1, a2, b1, b2, c1, c2, d1, d2; // Parameters
+var params; // Array for parameters
 
 var svg = d3.select("#demoarea")
               .append("svg")
@@ -274,30 +276,32 @@ var yG = svg.append("g")
 // G object for sample points
 var pointsG = svg.append("g");
 
+// G object for solution
+var solutionG = svg.append("g");
+
 // G object for function
 var functionG = svg.append("g");
-var graphF = line.interpolate("linear")
+var graph = line.interpolate("linear")
                  .x(function(d) { return xScale(d[0]); })
                  .y(function(d) { return yScale(d[1]); });
 
 redraw();
 
 function f(a1, a2, b1, b2, c1, c2, d1, d2, x) {
-  console.log()
   return a1*Math.exp(a2*x) + b1*Math.log(b2*(x + 1))
-        + c1*Math.pow((x - c2)/2, 3) + d1*Math.sin(d2*x);
+        + c1*Math.pow((x/2 - c2), 3) + d1*Math.sin(d2*x);
 }
 
 function redraw() {
 
-  var a1 = parseFloat(document.getElementById("a1").value);
-  var a2 = parseFloat(document.getElementById("a2").value);
-  var b1 = parseFloat(document.getElementById("b1").value);
-  var b2 = parseFloat(document.getElementById("b2").value);
-  var c1 = parseFloat(document.getElementById("c1").value);
-  var c2 = parseFloat(document.getElementById("c2").value);
-  var d1 = parseFloat(document.getElementById("d1").value);
-  var d2 = parseFloat(document.getElementById("d2").value);
+  a1 = parseFloat(document.getElementById("a1").value);
+  a2 = parseFloat(document.getElementById("a2").value);
+  b1 = parseFloat(document.getElementById("b1").value);
+  b2 = parseFloat(document.getElementById("b2").value);
+  c1 = parseFloat(document.getElementById("c1").value);
+  c2 = parseFloat(document.getElementById("c2").value);
+  d1 = parseFloat(document.getElementById("d1").value);
+  d2 = parseFloat(document.getElementById("d2").value);
 
   data = [];
 
@@ -314,6 +318,7 @@ function redraw() {
   }
 
   pointsG.selectAll("circle").remove("circle");
+  pointsG.selectAll("path").remove("path");
 
   pointsG.selectAll("circle")
        .data(data)
@@ -324,20 +329,24 @@ function redraw() {
        .attr("r", 4)
        .attr("fill", "gray");
 
+  pointsG.append("path").attr("d", graph(data))
+                  .attr("fill", "none")
+                  .attr("stroke", "gray");
+
   functionG.selectAll("path").remove("path");
 
-  functionG.append("path").attr("d", graphF(fVals))
+  functionG.append("path").attr("d", graph(fVals))
                   .attr("fill", "none")
                   .attr("stroke", "blue");
 }
 
 
 function compute() {
-  d3.json('/voronoi')
+  params = [a1, a2, b1, b2, c1, c2, d1, d2];
+  console.log(params);
+  d3.json('/piecewiseLinear')
     .header('Content-Type', 'application/json')
-    .post(JSON.stringify({'clients': vertices,
-                          'facilities': sites,
-                          'charge': charge }), serverResponse);
+    .post(JSON.stringify({'params': params}), serverResponse);
 }
 
 function serverResponse(error, data) {
@@ -347,6 +356,14 @@ function serverResponse(error, data) {
     if ('solution' in data) {
         // Import solution and put it into correct format
         var solution = data['solution'];
+        solution = Math.round(solution);
+        console.log('solution', solution);
+        var solPoint = [solution, f(a1,a2,b1,b2,c1,c2,d1,d2,solution)];
+        solutionG.selectAll("circle").remove("circle");
+        solutionG.append("circle").attr("cx", xScale(solPoint[0]))
+                                  .attr("cy", yScale(solPoint[1]))
+                                  .attr("r", 5)
+                                  .attr("fill", "red");
     }
   }
 }
