@@ -21,7 +21,7 @@ def optimize(params):
     b1 = params[2]; b2 = params[3];
     c1 = params[4]; c2 = params[5];
     d1 = params[6]; d2 = params[7];
-    n = params[8]; # Number of points
+    n = params[8]; # Number of points - 1
 
     m = Model()
 
@@ -37,12 +37,15 @@ def optimize(params):
 
     fi = [] # Function value at sample points
 
-    for i in range(n):
-        xi.append(lb + (ub - lb) * i / (n - 1))
+    for i in range(n + 1):
+        xi.append(lb + (ub - lb) * i / n)
         fi.append(f1(xi[i], a1, a2) +
                   f2(xi[i], b1, b2) +
                   f3(xi[i], c1, c2) +
                   f4(xi[i], d1, d2))
+
+    print xi
+    print fi
 
     m.setPWLObj(x, xi, fi)
 

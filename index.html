@@ -356,7 +356,6 @@ function serverResponse(error, data) {
     if ('solution' in data) {
         // Import solution and put it into correct format
         var solution = data['solution'];
-        solution = Math.round(solution);
         console.log('solution', solution);
         var solPoint = [solution, f(a1,a2,b1,b2,c1,c2,d1,d2,solution)];
         solutionG.selectAll("circle").remove("circle");
