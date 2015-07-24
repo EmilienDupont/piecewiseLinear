@@ -21,6 +21,7 @@ def optimize(params):
     b1 = params[2]; b2 = params[3];
     c1 = params[4]; c2 = params[5];
     d1 = params[6]; d2 = params[7];
+    n = params[8]; # Number of points
 
     m = Model()
 
@@ -31,8 +32,6 @@ def optimize(params):
     x = m.addVar(lb ,ub , name='x')
 
     m.update()
-
-    n = 101 # Number of points
 
     xi = [] # Sample points
 
@@ -51,7 +50,7 @@ def optimize(params):
 
     return x.X
 
-params = [1,1,1,1,1,1,1,1]
+params = [1,1,1,1,1,1,1,1,10];
 
 x0 = optimize(params)
 
