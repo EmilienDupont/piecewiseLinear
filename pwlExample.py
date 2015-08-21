@@ -38,6 +38,8 @@ def optimize(rate, profit, limit, hours, output=False):
     # Add constraints
     m.addConstr(y == quicksum( x[j]/rate[j] for j in range(n)))
 
+    m.addConstr(y <= maxhours)
+
     # Set objective
     m.setObjective( quicksum(profit[i]*x[i] for i in range(n)), GRB.MAXIMIZE)
 
@@ -67,7 +69,7 @@ def optimize(rate, profit, limit, hours, output=False):
     for i in range(n):
         solution.append(x[i].X)
 
-    return [solution, output.getvalue()]
+    return [solution, y.X, m.ObjVal, output.getvalue()]
 
 rate = [200, 140]; profit = [25,30]; limit = [6000,4000];
 limithours = 40; maxhours = 50; penalty = 100; hours = [limithours, maxhours,penalty];

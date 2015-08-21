@@ -194,6 +194,25 @@
       <div id="demoarea">
       </div>
       <button class="pure-button" onclick="compute()">Compute</button>
+      <p>
+        <button class="pure-button" onclick="toggle_div()">Gurobi Log</button>
+      </p>
+
+
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
+      <script>
+        function toggle_div() {
+          var logfile = d3.select('#logfile');
+          if (logfile.style("display") === "none") {
+            logfile.style("display", "block");
+          } else {
+            logfile.style("display", "none");
+          }
+        }
+      </script>
+
+      <examplecode id=logfile>
+      </examplecode>
     </div>
 
     <div style="min-height:100px"></div>
@@ -209,6 +228,9 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
 <script>
+
+// Hide Log File initially
+d3.select('#logfile').style("display", "none");
 
 //Width and height
 var width = 800;
@@ -256,11 +278,20 @@ function serverResponse(error, data) {
         var sol = data['solution'];
         console.log('solution', sol);
         var solution = sol[0];
+        var time = sol[1];
+        var gains = sol[2];
+        var logMsg = sol[3]; // Log message to display
+
+        console.log('time', time);
+        console.log('profit', gains);
+
+        d3.select('#logfile').html(logMsg);
+
         solutionG.selectAll("circle").remove("circle");
         solutionG.selectAll("circle").data(solution).enter()
-                  .append("circle").attr("cx", function (d,i) { return (i+1)*width/10; })
+                  .append("circle").attr("cx", function (d,i) { return (i+1)*width/6; })
                   .attr("cy", height/3)
-                  .attr("r", function(d) { return d/20; })
+                  .attr("r", function(d,i) { return d/limit[i]*50; })
                   .attr("fill", "red");
     }
   }
