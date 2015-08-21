@@ -44,7 +44,127 @@
     <div class="example_section" id="problem">
       <h2><a href="#problem" name="problem">Problem Description</a></h2>
       Problem description goes here
+      <p>
+      <label for=nData> Number of sample points </label>
+      <input type="range" min = 3 max = 30 step = 1 id="nData" value="10" oninput="redraw()" class="slider-width">
+      <label for=k> k </label>
+      <input type="range" min = 1 max = 5 step = 0.01 id="k" value="2" oninput="redraw()" class="slider-width">
+      </p>
 
+      <div id="piecewisedemo">
+      </div>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
+        <script>
+        
+        //Width and height
+        var width = 700;
+        var height = 300;
+        var padding = 20;
+        var rangeX = 5;
+        var data = [];
+        var fVals = [];
+        var n = 100; // Number of points to draw function
+        var nData; // Number of sampled points
+        var k;
+        
+        var svg = d3.select("#piecewisedemo")
+                      .append("svg")
+                      .attr("width", width)
+                      .attr("height", height);
+        
+        // Create scale functions
+        var xScale = d3.scale.linear()
+                             .domain([0, rangeX])
+                             .range([padding, width - padding]);
+        
+        var yScale = d3.scale.linear()
+                             .domain([-5,5])
+                             .range([height - padding, padding]);
+        
+        // Create axis functions
+        var xAxis = d3.svg.axis()
+                          .scale(xScale);
+        
+        var yAxis = d3.svg.axis()
+                          .scale(yScale)
+                          .orient("left");
+        
+        // Create line function
+        var line = d3.svg.line();
+        
+        // G objects for axes
+        var xG = svg.append("g")
+                    .attr("class", "axis")
+                    .attr("stroke", "black")
+                    .attr("shape-rendering", "crispEdges")
+                    .attr("transform", "translate(0," + height/2 + ")")
+                    .call(xAxis);
+        
+        var yG = svg.append("g")
+                    .attr("class", "axis")
+                    .attr("stroke", "black")
+                    .attr("shape-rendering", "crispEdges")
+                    .attr("transform", "translate(" + padding + ",0)")
+                    .call(yAxis);
+        
+        // G object for sample points
+        var pointsG = svg.append("g");
+        
+        // G object for function
+        var functionG = svg.append("g");
+        var graph = line.interpolate("linear")
+                         .x(function(d) { return xScale(d[0]); })
+                         .y(function(d) { return yScale(d[1]); });
+        
+        redraw();
+        
+        function f(x, k) {
+          return -(x - 2.5)*(x - 2.5) + Math.sin(k*x) + 3;
+        }
+        
+        function redraw() {
+          console.log('redraw');
+          nData = parseInt(document.getElementById("nData").value);
+          k = parseFloat(document.getElementById("k").value);
+          console.log(nData, k);
+          data = [];
+        
+          for (var i = 0; i < nData + 1; i++) {
+            var x = rangeX*i/nData;
+            data.push([x, f(x,k)]);
+          }
+        
+          fVals = [];
+        
+          for (var i = 0; i < n + 1; i++) {
+            var x = rangeX*i/n;
+            fVals.push([x, f(x,k)]);
+          }
+          console.log('data', data[5]);
+          pointsG.selectAll("circle").remove("circle");
+          pointsG.selectAll("path").remove("path");
+        
+          pointsG.selectAll("circle")
+               .data(data)
+               .enter()
+               .append("circle")
+               .attr("cx", function(d) { return xScale(d[0]); })
+               .attr("cy", function(d) { return yScale(d[1]); })
+               .attr("r", 4)
+               .attr("fill", "gray");
+        
+          pointsG.append("path").attr("d", graph(data))
+                          .attr("fill", "none")
+                          .attr("stroke", "gray");
+        
+          functionG.selectAll("path").remove("path");
+        
+          functionG.append("path").attr("d", graph(fVals))
+                          .attr("fill", "none")
+                          .attr("stroke", "blue");
+        }
+        
+        </script>
     </div>
     <div class="example_section" id="model">
       <h2><a href="#model" name="model">Mathematical Model</a></h2>
@@ -64,44 +184,6 @@
     <div class="example_section" id="demo">
       <h2><a href="#demo" name="demo">Live Demo</a></h2>
 
-      <p> Functions are
-      \[
-      f_1 (x) = a_1 e^{ a_2 x}
-      \]
-      \[
-      f_2 (x) = b_1 \ln (b_2 (x + 1) )
-      \]
-      \[
-      f_3 (x) = c_1 (\frac{x}{2} - c_2)^{3}
-      \]
-      \[
-      f_4 (x) = d_1 \sin ( d_2 x )
-      \]
-      </p>
-      <p>
-      <label for=a1> a1 </label>
-      <input type="range" min = -1 max = 1 step = 0.01 id="a1" value=".5" oninput="redraw()" class="slider-width">
-      <label for=a2> a2 </label>
-      <input type="range" min = 0.1 max = .5 step = 0.01 id="a2" value="0.2" oninput="redraw()" class="slider-width">
-      </p>
-      <p>
-      <label for=b1> b1 </label>
-      <input type="range" min = -1 max = 1 step = 0.01 id="b1" value=".5" oninput="redraw()" class="slider-width">
-      <label for=b2> b2 </label>
-      <input type="range" min = 0.5 max = 5 step = 0.01 id="b2" value="1" oninput="redraw()" class="slider-width">
-      </p>
-      <p>
-      <label for=c1> c1 </label>
-      <input type="range" min = -1 max = 1 step = 0.01 id="c1" value=".5" oninput="redraw()" class="slider-width">
-      <label for=c2> c2 </label>
-      <input type="range" min = 0 max = 5 step = 0.01 id="c2" value="1.5" oninput="redraw()" class="slider-width">
-      </p>
-      <p>
-      <label for=d1> d1 </label>
-      <input type="range" min = -4 max = 4 step = 0.01 id="d1" value="2" oninput="redraw()" class="slider-width">
-      <label for=d2> d2 </label>
-      <input type="range" min = 1 max = 5 step = 0.01 id="d2" value="2" oninput="redraw()" class="slider-width">
-      </p>
       <div id="demoarea">
       </div>
       <button class="pure-button" onclick="compute()">Compute</button>
@@ -120,7 +202,7 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
 <script>
-
+/*
 //Width and height
 var width = 800;
 var height = 500;
@@ -185,61 +267,6 @@ var graph = line.interpolate("linear")
                  .x(function(d) { return xScale(d[0]); })
                  .y(function(d) { return yScale(d[1]); });
 
-redraw();
-
-function f(a1, a2, b1, b2, c1, c2, d1, d2, x) {
-  return a1*Math.exp(a2*x) + b1*Math.log(b2*(x + 1))
-        + c1*Math.pow((x/2 - c2), 3) + d1*Math.sin(d2*x);
-}
-
-function redraw() {
-
-  a1 = parseFloat(document.getElementById("a1").value);
-  a2 = parseFloat(document.getElementById("a2").value);
-  b1 = parseFloat(document.getElementById("b1").value);
-  b2 = parseFloat(document.getElementById("b2").value);
-  c1 = parseFloat(document.getElementById("c1").value);
-  c2 = parseFloat(document.getElementById("c2").value);
-  d1 = parseFloat(document.getElementById("d1").value);
-  d2 = parseFloat(document.getElementById("d2").value);
-
-  data = [];
-
-  for (var i = 0; i < nData + 1; i++) {
-    var x = rangeX*i/nData;
-    data.push([x, f(a1,a2,b1,b2,c1,c2,d1,d2,x)]);
-  }
-
-  fVals = [];
-
-  for (var i = 0; i < n + 1; i++) {
-    var x = rangeX*i/n;
-    fVals.push([x, f(a1,a2,b1,b2,c1,c2,d1,d2,x)]);
-  }
-
-  pointsG.selectAll("circle").remove("circle");
-  pointsG.selectAll("path").remove("path");
-
-  pointsG.selectAll("circle")
-       .data(data)
-       .enter()
-       .append("circle")
-       .attr("cx", function(d) { return xScale(d[0]); })
-       .attr("cy", function(d) { return yScale(d[1]); })
-       .attr("r", 4)
-       .attr("fill", "gray");
-
-  pointsG.append("path").attr("d", graph(data))
-                  .attr("fill", "none")
-                  .attr("stroke", "gray");
-
-  functionG.selectAll("path").remove("path");
-
-  functionG.append("path").attr("d", graph(fVals))
-                  .attr("fill", "none")
-                  .attr("stroke", "blue");
-}
-
 
 function compute() {
   params = [a1, a2, b1, b2, c1, c2, d1, d2, nData];
@@ -266,5 +293,5 @@ function serverResponse(error, data) {
     }
   }
 }
-
+*/
 </script>
