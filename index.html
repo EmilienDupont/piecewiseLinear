@@ -44,9 +44,16 @@
     <div class="example_section" id="problem">
       <h2><a href="#problem" name="problem">Problem Description</a></h2>
       Problem description goes here
+      <p> Below is the function
+      \[
+      \ f(x) = -(x - 2.5)^2 + \sin (kx) + 3
+      \]
+      and its piecewise linear approximation.</p>
       <p>
       <label for=nData> Number of sample points </label>
       <input type="range" min = 3 max = 30 step = 1 id="nData" value="10" oninput="redraw()" class="slider-width">
+      </p>
+      <p>
       <label for=k> k </label>
       <input type="range" min = 1 max = 5 step = 0.01 id="k" value="2" oninput="redraw()" class="slider-width">
       </p>
@@ -55,7 +62,7 @@
       </div>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
         <script>
-        
+
         //Width and height
         var width = 700;
         var height = 300;
@@ -66,32 +73,32 @@
         var n = 100; // Number of points to draw function
         var nData; // Number of sampled points
         var k;
-        
+
         var svg = d3.select("#piecewisedemo")
                       .append("svg")
                       .attr("width", width)
                       .attr("height", height);
-        
+
         // Create scale functions
         var xScale = d3.scale.linear()
                              .domain([0, rangeX])
                              .range([padding, width - padding]);
-        
+
         var yScale = d3.scale.linear()
                              .domain([-5,5])
                              .range([height - padding, padding]);
-        
+
         // Create axis functions
         var xAxis = d3.svg.axis()
                           .scale(xScale);
-        
+
         var yAxis = d3.svg.axis()
                           .scale(yScale)
                           .orient("left");
-        
+
         // Create line function
         var line = d3.svg.line();
-        
+
         // G objects for axes
         var xG = svg.append("g")
                     .attr("class", "axis")
@@ -99,43 +106,43 @@
                     .attr("shape-rendering", "crispEdges")
                     .attr("transform", "translate(0," + height/2 + ")")
                     .call(xAxis);
-        
+
         var yG = svg.append("g")
                     .attr("class", "axis")
                     .attr("stroke", "black")
                     .attr("shape-rendering", "crispEdges")
                     .attr("transform", "translate(" + padding + ",0)")
                     .call(yAxis);
-        
+
         // G object for sample points
         var pointsG = svg.append("g");
-        
+
         // G object for function
         var functionG = svg.append("g");
         var graph = line.interpolate("linear")
                          .x(function(d) { return xScale(d[0]); })
                          .y(function(d) { return yScale(d[1]); });
-        
+
         redraw();
-        
+
         function f(x, k) {
           return -(x - 2.5)*(x - 2.5) + Math.sin(k*x) + 3;
         }
-        
+
         function redraw() {
           console.log('redraw');
           nData = parseInt(document.getElementById("nData").value);
           k = parseFloat(document.getElementById("k").value);
           console.log(nData, k);
           data = [];
-        
+
           for (var i = 0; i < nData + 1; i++) {
             var x = rangeX*i/nData;
             data.push([x, f(x,k)]);
           }
-        
+
           fVals = [];
-        
+
           for (var i = 0; i < n + 1; i++) {
             var x = rangeX*i/n;
             fVals.push([x, f(x,k)]);
@@ -143,7 +150,7 @@
           console.log('data', data[5]);
           pointsG.selectAll("circle").remove("circle");
           pointsG.selectAll("path").remove("path");
-        
+
           pointsG.selectAll("circle")
                .data(data)
                .enter()
@@ -152,18 +159,18 @@
                .attr("cy", function(d) { return yScale(d[1]); })
                .attr("r", 4)
                .attr("fill", "gray");
-        
+
           pointsG.append("path").attr("d", graph(data))
                           .attr("fill", "none")
                           .attr("stroke", "gray");
-        
+
           functionG.selectAll("path").remove("path");
-        
+
           functionG.append("path").attr("d", graph(fVals))
                           .attr("fill", "none")
                           .attr("stroke", "blue");
         }
-        
+
         </script>
     </div>
     <div class="example_section" id="model">
@@ -202,78 +209,42 @@
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.5/d3.min.js"></script>
 <script>
-/*
+
 //Width and height
 var width = 800;
 var height = 500;
-var padding = 20;
-var rangeX = 5;
-var data = [];
-var fVals = [];
-var n = 100; // Number of points to draw function
-var nData = 10; // Number of sampled points
-var a1, a2, b1, b2, c1, c2, d1, d2; // Parameters
-var params; // Array for parameters
+var colors = d3.scale.category20();
+
+// Initial data
+var rate = [20,14,60,23,10];
+var profit = [10,11,8,13,11];
+var limit = [500,300,420,350,180];
+var hours = [40,50,100]; // limithours, maxhours, penalty
 
 var svg = d3.select("#demoarea")
               .append("svg")
               .attr("width", width)
               .attr("height", height);
 
-// Create scale functions
-var xScale = d3.scale.linear()
-                     .domain([0, rangeX])
-                     .range([padding, width - padding]);
-
-var yScale = d3.scale.linear()
-                     .domain([-5,5])
-                     .range([height - padding, padding]);
-
-// Create axis functions
-var xAxis = d3.svg.axis()
-                  .scale(xScale);
-
-var yAxis = d3.svg.axis()
-                  .scale(yScale)
-                  .orient("left");
-
-// Create line function
-var line = d3.svg.line();
-
-// G objects for axes
-var xG = svg.append("g")
-            .attr("class", "axis")
-            .attr("stroke", "black")
-            .attr("shape-rendering", "crispEdges")
-            .attr("transform", "translate(0," + height/2 + ")")
-            .call(xAxis);
-
-var yG = svg.append("g")
-            .attr("class", "axis")
-            .attr("stroke", "black")
-            .attr("shape-rendering", "crispEdges")
-            .attr("transform", "translate(" + padding + ",0)")
-            .call(yAxis);
-
-// G object for sample points
-var pointsG = svg.append("g");
+// G object for background
+var backgroundG = svg.append("g");
 
 // G object for solution
 var solutionG = svg.append("g");
 
-// G object for function
-var functionG = svg.append("g");
-var graph = line.interpolate("linear")
-                 .x(function(d) { return xScale(d[0]); })
-                 .y(function(d) { return yScale(d[1]); });
-
+backgroundG.append("rect")
+           .attr("x",0)
+           .attr("y",0)
+           .attr("width", width)
+           .attr("height", height)
+           .attr("fill", colors(14));
+// optimize(rate, profit, limit, limithours, maxhours, penalty)
 
 function compute() {
-  params = [a1, a2, b1, b2, c1, c2, d1, d2, nData];
-  console.log(params);
-  d3.json('/piecewiseLinear')
+  d3.json('/pwlExample.py')
     .header('Content-Type', 'application/json')
-    .post(JSON.stringify({'params': params}), serverResponse);
+    .post(JSON.stringify({'rate': rate, 'profit': profit, 'limit': limit,
+                         'hours': hours}), serverResponse);
 }
 
 function serverResponse(error, data) {
@@ -282,16 +253,17 @@ function serverResponse(error, data) {
   if (!error) {
     if ('solution' in data) {
         // Import solution and put it into correct format
-        var solution = data['solution'];
-        console.log('solution', solution);
-        var solPoint = [solution, f(a1,a2,b1,b2,c1,c2,d1,d2,solution)];
+        var sol = data['solution'];
+        console.log('solution', sol);
+        var solution = sol[0];
         solutionG.selectAll("circle").remove("circle");
-        solutionG.append("circle").attr("cx", xScale(solPoint[0]))
-                                  .attr("cy", yScale(solPoint[1]))
-                                  .attr("r", 5)
-                                  .attr("fill", "red");
+        solutionG.selectAll("circle").data(solution).enter()
+                  .append("circle").attr("cx", function (d,i) { return (i+1)*width/10; })
+                  .attr("cy", height/3)
+                  .attr("r", function(d) { return d/20; })
+                  .attr("fill", "red");
     }
   }
 }
-*/
+
 </script>

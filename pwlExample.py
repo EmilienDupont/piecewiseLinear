@@ -8,19 +8,18 @@ def mycallback(model, where):
     if where == GRB.callback.MESSAGE:
         print >>model.__output, model.cbGet(GRB.callback.MSG_STRING),
 
-def f(x, limithours):
-    penalty = 1000000;
+def f(x, limithours, penalty):
     if x < limithours:
         return 0
     else:
         return (x-limithours)*penalty
 
-def optimize(rate, profit, limit, limithours, maxhours, output=False):
+def optimize(rate, profit, limit, hours, output=False):
     n = len(rate) # number of products
+    limithours = hours[0]; maxhours = hours[1]; penalty = hours[2];
 
     m = Model()
-    
-    
+
     if not output:
         m.params.OutputFlag = 0
 
@@ -31,9 +30,9 @@ def optimize(rate, profit, limit, limithours, maxhours, output=False):
 
     for i in range(n):
         x[i] = m.addVar(ub = limit[i], vtype=GRB.CONTINUOUS, name="x%d" % i)
-    
+
     y = m.addVar(vtype=GRB.CONTINUOUS, name="y")
-    
+
     m.update()
 
     # Add constraints
@@ -41,18 +40,18 @@ def optimize(rate, profit, limit, limithours, maxhours, output=False):
 
     # Set objective
     m.setObjective( quicksum(profit[i]*x[i] for i in range(n)), GRB.MAXIMIZE)
-    
+
     # Set piecewise linear objective
     nPts = 101
     yi = []
     fi = []
     lb = 0
-    ub = maxhours; 
+    ub = maxhours;
 
     for i in range(nPts):
         yi.append(lb + (ub - lb) * i / (nPts - 1))
-        fi.append(-f(yi[i], limithours))
-    
+        fi.append(-f(yi[i], limithours, penalty))
+
     m.setPWLObj(y, yi, fi)
 
     output = StringIO.StringIO()
@@ -63,22 +62,22 @@ def optimize(rate, profit, limit, limithours, maxhours, output=False):
     if (m.status != 2):
         return ["error"]
 
-    
     solution = []
-    
+
     for i in range(n):
         solution.append(x[i].X)
 
     return [solution, output.getvalue()]
 
 rate = [200, 140]; profit = [25,30]; limit = [6000,4000];
-limithours = 40; maxhours = 50;
+limithours = 40; maxhours = 50; penalty = 100; hours = [limithours, maxhours,penalty];
 
-solution = optimize(rate, profit, limit, limithours, maxhours);
+solution = optimize(rate, profit, limit, hours);
 
 def handleoptimize(jsdict):
-    if 'clients' in jsdict and 'facilities' in jsdict and 'charge' in jsdict:
-        solution = optimize(jsdict['clients'], jsdict['facilities'], jsdict['charge'])
+    if 'rate' in jsdict and 'profit' in jsdict and 'limit' in jsdict and 'hours' in jsdict:
+        solution = optimize(jsdict['rate'], jsdict['profit'], jsdict['limit'],
+                            jsdict['hours'])
         return {'solution': solution }
 
 if __name__ == '__main__':
