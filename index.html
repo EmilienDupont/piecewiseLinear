@@ -259,8 +259,7 @@ backgroundG.append("rect")
            .attr("y",0)
            .attr("width", width)
            .attr("height", height)
-           .attr("fill", colors(14));
-// optimize(rate, profit, limit, limithours, maxhours, penalty)
+           .attr("fill", "white");
 
 function compute() {
   d3.json('/pwlExample.py')
@@ -293,6 +292,14 @@ function serverResponse(error, data) {
                   .attr("cy", height/3)
                   .attr("r", function(d,i) { return d/limit[i]*50; })
                   .attr("fill", "red");
+        solutionG.append("text")
+                 .attr("x", .2*width)
+                 .attr("y", .8*height)
+                 .text("Profit: " + gains);
+        solutionG.append("text")
+                 .attr("x", .2*width)
+                 .attr("y", .9*height)
+                 .text(String(time) + " hours of work of which " + String(time - hours[0]) + " were overtime.");
     }
   }
 }
