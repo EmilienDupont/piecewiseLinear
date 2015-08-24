@@ -210,8 +210,8 @@
       <h2><a href="#model" name="model">Mathematical Model</a></h2>
 
       <p>
-        Let $P$ be the set of products the factory produces. With each of
-        these products we associate several quantities:
+        Let $P$ be the set of products the factory produces. With each
+        product $i$ we associate
         <ul>
           <li>$r_i$: the rate of production in tonnes per hour. </li>
           <li>$p_i$: the profit per tonne of product. </li>
@@ -220,7 +220,7 @@
       </p>
 
       <p>
-        For each product i, we let the variable $x_i$ denote the amount of
+        We let the variable $x_i$ denote the amount of product $i$
         we produce (in units of tonnes). The profit, is then given by
         \[
         \ \text{profit} = \sum_{i \in P} p_i x_i
@@ -247,7 +247,7 @@
 
       <p>
         To impose the time limit we could then add the constraint $\text{work hours}
-        leq t_{lim}$. In reality, however, it is often the case that we can
+        \leq t_{lim}$. In reality, however, it is often the case that we can
         run the factory beyond the time limit, i.e. work overtime. Overtime work
         is more expensive, so we introduce a penalty cost $c$. Therefore, if the
         factory runs for less than $t_{lim}$ hours, we pay no penalty, but if it
@@ -289,7 +289,39 @@
                         .style("fill", "rgb(0,0,200)");
       svg.selectAll("text").attr("text-anchor", "middle");
       </script>
+      <p>
+        To incorporate the overtime penalty in our model, we introduce a variable $t$
+        for time
+        \[
+        \ t = \sum_{i \in P} \frac{x_i}{a_i}
+        \]
+        And we update the profit
+        \[
+        \ \text{profit} = \sum_{i \in P} p_i x_i - f(t)
+        \]
+      </p>
 
+      <p>
+        Since we may want to limit the hours of overtime, we add a last constraint
+        \[
+        \ t \leq t_{max}
+        \]
+        where $t_{max}$ is the maximum amount of work hours.
+      </p>
+
+      <p>
+        Finally, our optimization model becomes
+        \[
+       \begin{array}{ll}
+       \text{maximize} & {\displaystyle \sum_{i \in P} p_i x_i - f(t)} \\
+       \text{subject to} & {\displaystyle
+                            t = \sum_{i \in P} \frac{x_i}{a_i}} \\
+                         & 0 \leq x_i \leq l_i \quad \forall i \in P \\
+                         & t \leq t_{max}
+       \end{array}
+       \]
+       where the objective is a piecewise linear function.
+      </p>
     </div>
     <div class="example_section" id="implementation">
       <h2><a href="#implementation" name="implementation">Implementation</a></h2>
