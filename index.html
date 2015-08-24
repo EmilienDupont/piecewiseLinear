@@ -40,10 +40,26 @@
     Explain use of PWL in Gurobi
     Demonstrate with simple application
     <p> Non-convex optimization </p>
+    <p>
+      In this example we'll solve a simple production planning problem
+      and demonstrate the use of piecewise linear (PWL) objectives in Gurobi.
+    </p>
+
+    <p>
+      We'll construct a mathematical model of the business problem,
+      implement this model in Gurobi's Python interface, and compute and
+      visualize an optimal solution.
+    </p>
+
+    <p>
+      REWRITE THIS
+      Although your own business may not involve supermarkets, the
+      same basic techniques used in this example can be used for many
+      other applications in supply chain, logistics and transportation.
+    </p>
 
     <div class="example_section" id="problem">
       <h2><a href="#problem" name="problem">Problem Description</a></h2>
-      Problem description goes here
       <p> Below is the function
       \[
       \ f(x) = -(x - 2.5)^2 + \sin (kx) + 3
@@ -173,10 +189,29 @@
 
         </script>
     </div>
+
+    <p>
+      Piecewise linear objectives can be used to approximate any
+      function (not necessarily quadratic or linear).
+    </p>
+
+    <p>
+      Piecewise linear objectives also arise naturally in many different
+      applications. In this example, we will see how PWL objectives are
+      used to solve problems which involve <em>soft constraints</em>.
+    </p>
+
+    <p>
+      We consider a
+    </p>
+
+
     <div class="example_section" id="model">
       <h2><a href="#model" name="model">Mathematical Model</a></h2>
 
-      <p>Model description goes here.</p>
+      <p>
+        
+      </p>
 
     </div>
     <div class="example_section" id="implementation">
