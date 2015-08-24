@@ -397,7 +397,7 @@ for (var i = 0; i < numProds; i++) {
   limit.push(300 + Math.round(200*Math.random()));
 }
 
-var hours = [200,1000,1000]; // limithours, maxhours, penalty
+var hours = [100,200,500]; // limithours, maxhours, penalty
 
 var svg = d3.select("#demoarea")
               .append("svg")
@@ -482,14 +482,14 @@ function serverResponse(error, data) {
 
         solutionG.selectAll("circle").remove("circle");
         solutionG.selectAll("circle")
-                  .data(rate)
+                  .data(solution)
                   .enter()
                   .append("circle")
                   .attr("cx", function(d,i) { return ((i % (numProds/3)) + 1)*width/(numProds/3 + 1); })
                   .attr("cy", function(d,i) { return Math.floor(i*3/numProds)*height/6 + height/5; })
+                  .attr("r", function(d,i) { return d/limit[i]*circleSize; })
                   .style("fill", function(d,i) { return colors(i % 20); })
-                  .style("opacity", .5)
-                  .attr("r", function(d,i) { return d/limit[i]*circleSize; });
+                  .style("stroke", "black");
 
         solutionG.selectAll("text").remove("text");
         solutionG.append("text")
@@ -499,7 +499,7 @@ function serverResponse(error, data) {
         solutionG.append("text")
                  .attr("x", .2*width)
                  .attr("y", .9*height)
-                 .text(String(time) + " hours of work of which " + String(time - hours[0]) + " were overtime.");
+                 .text(Math.round(time*10)/10 + " hours of work of which " + Math.round(10*(time - hours[0]))/10 + " were overtime.");
     }
   }
 }
