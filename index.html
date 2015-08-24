@@ -210,7 +210,37 @@
       <h2><a href="#model" name="model">Mathematical Model</a></h2>
 
       <p>
-        
+        Let $P$ be the set of products the factory produces. With each of
+        these products we associate several quantities:
+        <ul>
+          <li>$r_i$: the rate of production in tonnes per hour. </li>
+          <li>$p_i$: the profit per tonne of product. </li>
+          <li>$l_i$: the maximum limit of product that can be produced (in tonnes). </li>
+        </ul>
+      </p>
+
+      <p>
+        For each product, we let the variable $x_i$ denote the amount of
+        product $i$ we produce (in units of tonnes). The profit, is then
+        given by
+        \[
+        \ \text{profit} = sum_{i \in P} p_i x_i
+        \]
+      </p>
+
+      <p>
+        Since we cannot produce "negative" amounts of product and we cannot
+        exceed the maximum limit, we add the constraint
+        \[
+        \ 0 \leq x_i \leq l_i \quad \forall i \in P
+        \]
+      </p>
+
+      <p>
+        Furthermore, there is a limit of the amount of time the factory can
+        run. We denote this by $t_{lim}$. Since $x_i$ tonnes of each product
+        $i$ is produced at a rate $r_i$, the total amount of work hours is given
+        by
       </p>
 
     </div>
