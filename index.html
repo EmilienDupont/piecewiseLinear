@@ -397,7 +397,7 @@ for (var i = 0; i < numProds; i++) {
   limit.push(300 + Math.round(200*Math.random()));
 }
 
-var hours = [400,500,1000]; // limithours, maxhours, penalty
+var hours = [200,1000,1000]; // limithours, maxhours, penalty
 
 var svg = d3.select("#demoarea")
               .append("svg")
@@ -421,12 +421,39 @@ backgroundG.selectAll("circle")
            .data(rate)
            .enter()
            .append("circle")
-           .attr("cx", function(d,i) { return ((i % (numProds/3)) + 1)*width/(numProds/3 + 2); })
+           .attr("cx", function(d,i) { return ((i % (numProds/3)) + 1)*width/(numProds/3 + 1); })
            .attr("cy", function(d,i) { return Math.floor(i*3/numProds)*height/6 + height/5; })
            .attr("r", circleSize)
            .style("fill", function(d,i) { return colors(i % 20); })
-           .style("opacity", .5)
+           .style("opacity", .3)
            .style("stroke", "black");
+
+backgroundG.selectAll(".rate")
+           .data(rate)
+           .enter()
+           .append("text")
+           .attr("x", function(d,i) { return ((i % (numProds/3)) + 1)*width/(numProds/3 + 1); })
+           .attr("y", function(d,i) { return Math.floor(i*3/numProds)*height/6 + height/5 + 1.7*circleSize; })
+           .text(function(d) { return d + " T/hr"});
+
+backgroundG.selectAll(".profit")
+           .data(profit)
+           .enter()
+           .append("text")
+           .attr("x", function(d,i) { return ((i % (numProds/3)) + 1)*width/(numProds/3 + 1); })
+           .attr("y", function(d,i) { return Math.floor(i*3/numProds)*height/6 + height/5 + 2.2*circleSize; })
+           .text(function(d) { return d + " $/hr"});
+
+backgroundG.selectAll(".limit")
+           .data(limit)
+           .enter()
+           .append("text")
+           .attr("x", function(d,i) { return ((i % (numProds/3)) + 1)*width/(numProds/3 + 1); })
+           .attr("y", function(d,i) { return Math.floor(i*3/numProds)*height/6 + height/5 + 2.7*circleSize; })
+           .text(function(d) { return d + " T"});
+
+backgroundG.selectAll("text").attr("text-anchor", "middle")
+          .attr("font-size", 10).attr("font-family", "Helvetica Neue");
 
 function compute() {
   d3.json('/pwlExample.py')
@@ -458,7 +485,7 @@ function serverResponse(error, data) {
                   .data(rate)
                   .enter()
                   .append("circle")
-                  .attr("cx", function(d,i) { return ((i % (numProds/3)) + 1)*width/(numProds/3 + 2); })
+                  .attr("cx", function(d,i) { return ((i % (numProds/3)) + 1)*width/(numProds/3 + 1); })
                   .attr("cy", function(d,i) { return Math.floor(i*3/numProds)*height/6 + height/5; })
                   .style("fill", function(d,i) { return colors(i % 20); })
                   .style("opacity", .5)
