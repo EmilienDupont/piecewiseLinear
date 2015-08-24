@@ -236,12 +236,24 @@ d3.select('#logfile').style("display", "none");
 var width = 800;
 var height = 500;
 var colors = d3.scale.category20();
+var numProds = 3*7;
+var circleSize = 20;
 
 // Initial data
-var rate = [20,14,60,23,10];
-var profit = [10,11,8,13,11];
-var limit = [500,300,420,350,180];
-var hours = [40,50,100]; // limithours, maxhours, penalty
+//var rate = [20,14,60,23,10];
+var rate = [];
+//var profit = [10,11,8,13,11];
+var profit = [];
+//var limit = [500,300,420,350,180];
+var limit = [];
+
+for (var i = 0; i < numProds; i++) {
+  rate.push(20 + Math.round(40*Math.random()));
+  profit.push(10 + Math.round(20*Math.random()));
+  limit.push(300 + Math.round(200*Math.random()));
+}
+
+var hours = [400,500,1000]; // limithours, maxhours, penalty
 
 var svg = d3.select("#demoarea")
               .append("svg")
@@ -260,6 +272,17 @@ backgroundG.append("rect")
            .attr("width", width)
            .attr("height", height)
            .attr("fill", "white");
+
+backgroundG.selectAll("circle")
+           .data(rate)
+           .enter()
+           .append("circle")
+           .attr("cx", function(d,i) { return ((i % (numProds/3)) + 1)*width/(numProds/3 + 2); })
+           .attr("cy", function(d,i) { return Math.floor(i*3/numProds)*height/6 + height/5; })
+           .attr("r", circleSize)
+           .style("fill", function(d,i) { return colors(i % 20); })
+           .style("opacity", .5)
+           .style("stroke", "black");
 
 function compute() {
   d3.json('/pwlExample.py')
@@ -287,15 +310,21 @@ function serverResponse(error, data) {
         d3.select('#logfile').html(logMsg);
 
         solutionG.selectAll("circle").remove("circle");
-        solutionG.selectAll("circle").data(solution).enter()
-                  .append("circle").attr("cx", function (d,i) { return (i+1)*width/6; })
-                  .attr("cy", height/3)
-                  .attr("r", function(d,i) { return d/limit[i]*50; })
-                  .attr("fill", "red");
+        solutionG.selectAll("circle")
+                  .data(rate)
+                  .enter()
+                  .append("circle")
+                  .attr("cx", function(d,i) { return ((i % (numProds/3)) + 1)*width/(numProds/3 + 2); })
+                  .attr("cy", function(d,i) { return Math.floor(i*3/numProds)*height/6 + height/5; })
+                  .style("fill", function(d,i) { return colors(i % 20); })
+                  .style("opacity", .5)
+                  .attr("r", function(d,i) { return d/limit[i]*circleSize; });
+
+        solutionG.selectAll("text").remove("text");
         solutionG.append("text")
                  .attr("x", .2*width)
                  .attr("y", .8*height)
-                 .text("Profit: " + gains);
+                 .text("Profit: " + String(Math.round(gains*100)/100) + "$");
         solutionG.append("text")
                  .attr("x", .2*width)
                  .attr("y", .9*height)

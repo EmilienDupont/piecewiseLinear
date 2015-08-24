@@ -71,11 +71,6 @@ def optimize(rate, profit, limit, hours, output=False):
 
     return [solution, y.X, m.ObjVal, output.getvalue()]
 
-rate = [200, 140]; profit = [25,30]; limit = [6000,4000];
-limithours = 40; maxhours = 50; penalty = 100; hours = [limithours, maxhours,penalty];
-
-solution = optimize(rate, profit, limit, hours);
-
 def handleoptimize(jsdict):
     if 'rate' in jsdict and 'profit' in jsdict and 'limit' in jsdict and 'hours' in jsdict:
         solution = optimize(jsdict['rate'], jsdict['profit'], jsdict['limit'],
