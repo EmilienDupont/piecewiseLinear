@@ -399,8 +399,10 @@ for (var i = 0; i < numProds; i++) {
   limit.push(300 + Math.round(200*Math.random()));
 }
 
-var hours = [100,200,500]; // limithours, maxhours, penalty
-
+//var hours = [100,200,500]; // limithours, maxhours, penalty
+var limithours;
+var maxhours = 200;
+var penalty;
 
 /*
  *
@@ -519,7 +521,7 @@ function dragmove(d) {
     }
   } else {
     var py = d3.event.y;
-    if (py < .05*height || py > 1.05*height) {
+    if (py < .05*appHeight || py > 1.05*appHeight) {
       return;
     } else {
       p2[1] = py;
@@ -527,6 +529,7 @@ function dragmove(d) {
   }
   reline();
 }
+
 /*
  *
  * Optimization
@@ -534,10 +537,14 @@ function dragmove(d) {
  */
 
 function compute() {
+  limithours = (p1[0] - (width/2 - appWidth/2))*200/appWidth;
+  penalty = -(p2[1] - p1[1])/(p2[0] - p1[0])*500;
+  console.log('limithours', limithours);
+  console.log('penalty', penalty);
   d3.json('/pwlExample.py')
     .header('Content-Type', 'application/json')
     .post(JSON.stringify({'rate': rate, 'profit': profit, 'limit': limit,
-                         'hours': hours}), serverResponse);
+                         'hours': [limithours, maxhours, penalty]}), serverResponse);
 }
 
 function serverResponse(error, data) {
@@ -575,13 +582,15 @@ function serverResponse(error, data) {
 
         solutionG.selectAll("text").remove("text");
         solutionG.append("text")
-                 .attr("x", .2*width)
-                 .attr("y", .9*height)
+                 .attr("x", .5*width)
+                 .attr("y", .94*height)
                  .text("Profit: " + String(Math.round(gains*100)/100) + "$");
         solutionG.append("text")
-                 .attr("x", .2*width)
-                 .attr("y", .94*height)
-                 .text(Math.round(time*10)/10 + " hours of work of which " + Math.round(10*(time - hours[0]))/10 + " were overtime.");
+                 .attr("x", .5*width)
+                 .attr("y", .9*height)
+                 .text(Math.round(time*10)/10 + " hours of work of which " + Math.round(10*(time - Math.floor(limithours)))/10 + " were overtime.");
+        solutionG.selectAll("text").attr("text-anchor", "middle")
+                 .attr("font-size", 20).attr("font-family", "Helvetica Neue");
     }
   }
 }
