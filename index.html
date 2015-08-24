@@ -511,9 +511,19 @@ function reline() {
 
 function dragmove(d) {
   if (d3.select(this).attr("id") === "point1") {
-    p1[0] = d3.event.x;
+    var px = d3.event.x;
+    if (px < width/2 - appWidth/2 || px > width/2 + appWidth/2) {
+      return;
+    } else {
+      p1[0] = px;
+    }
   } else {
-    p2[1] = d3.event.y;
+    var py = d3.event.y;
+    if (py < .05*height || py > 1.05*height) {
+      return;
+    } else {
+      p2[1] = py;
+    }
   }
   reline();
 }
