@@ -260,6 +260,35 @@
              \end{array}\right.
         \]
       </p>
+      <aside>Plot of $f(t)$, the piecewise linear penalty function.
+      </aside>
+      <div id="penaltyfunction"></div>
+      <script>
+      var width = 700;
+      var height = 300;
+      var svg = d3.select("#penaltyfunction")
+              .append("svg")
+              .attr("width", width)
+              .attr("height", height);
+
+      var p1 = [.1*width, .8*height];
+      var p2 = [.5*width, .8*height];
+      var p3 = [.9*width, .2*height];
+
+      svg.append("line").attr("x1", p1[0]).attr("y1", p1[1]).attr("x2", p2[0]).attr("y2", p2[1]);
+      svg.append("line").attr("x1", p2[0]).attr("y1", p2[1]).attr("x2", p3[0]).attr("y2", p3[1]);
+      svg.selectAll("line").style("stroke", "rgb(0,0,200)").style("stroke-width", 3);
+      svg.append("line").attr("x1", p1[0]).attr("y1", 0).attr("x2", p1[0]).attr("y2", height)
+         .style("stroke", "black");
+      svg.append("line").attr("x1", 0).attr("y1", p1[1]).attr("x2", width).attr("y2", p1[1])
+         .style("stroke", "black");
+      svg.append("text").attr("x", .05*width).attr("y", .1*height).text("cost");
+      svg.append("text").attr("x", .9*width).attr("y", .9*height).text("time");
+      svg.selectAll("text").style("fill", "black");
+      svg.append("text").attr("x", p2[0]).attr("y", .9*height).text("time limit")
+                        .style("fill", "rgb(0,0,200)");
+      svg.selectAll("text").attr("text-anchor", "middle");
+      </script>
 
     </div>
     <div class="example_section" id="implementation">
