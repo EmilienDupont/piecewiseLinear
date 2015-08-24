@@ -382,6 +382,7 @@ var height = 500;
 var colors = d3.scale.category20();
 var numProds = 3*7;
 var circleSize = 20;
+var circleHeight = height/3;
 
 // Initial data
 //var rate = [20,14,60,23,10];
@@ -422,10 +423,10 @@ backgroundG.selectAll("circle")
            .enter()
            .append("circle")
            .attr("cx", function(d,i) { return ((i % (numProds/3)) + 1)*width/(numProds/3 + 1); })
-           .attr("cy", function(d,i) { return Math.floor(i*3/numProds)*height/6 + height/5; })
+           .attr("cy", function(d,i) { return Math.floor(i*3/numProds)*height/6 + circleHeight; })
            .attr("r", circleSize)
            .style("fill", function(d,i) { return colors(i % 20); })
-           .style("opacity", .3)
+           .style("opacity", .1)
            .style("stroke", "black");
 
 backgroundG.selectAll(".rate")
@@ -433,7 +434,7 @@ backgroundG.selectAll(".rate")
            .enter()
            .append("text")
            .attr("x", function(d,i) { return ((i % (numProds/3)) + 1)*width/(numProds/3 + 1); })
-           .attr("y", function(d,i) { return Math.floor(i*3/numProds)*height/6 + height/5 + 1.7*circleSize; })
+           .attr("y", function(d,i) { return Math.floor(i*3/numProds)*height/6 + circleHeight + 1.7*circleSize; })
            .text(function(d) { return d + " T/hr"});
 
 backgroundG.selectAll(".profit")
@@ -441,7 +442,7 @@ backgroundG.selectAll(".profit")
            .enter()
            .append("text")
            .attr("x", function(d,i) { return ((i % (numProds/3)) + 1)*width/(numProds/3 + 1); })
-           .attr("y", function(d,i) { return Math.floor(i*3/numProds)*height/6 + height/5 + 2.2*circleSize; })
+           .attr("y", function(d,i) { return Math.floor(i*3/numProds)*height/6 + circleHeight + 2.2*circleSize; })
            .text(function(d) { return d + " $/hr"});
 
 backgroundG.selectAll(".limit")
@@ -449,7 +450,7 @@ backgroundG.selectAll(".limit")
            .enter()
            .append("text")
            .attr("x", function(d,i) { return ((i % (numProds/3)) + 1)*width/(numProds/3 + 1); })
-           .attr("y", function(d,i) { return Math.floor(i*3/numProds)*height/6 + height/5 + 2.7*circleSize; })
+           .attr("y", function(d,i) { return Math.floor(i*3/numProds)*height/6 + circleHeight + 2.7*circleSize; })
            .text(function(d) { return d + " T"});
 
 backgroundG.selectAll("text").attr("text-anchor", "middle")
@@ -486,19 +487,23 @@ function serverResponse(error, data) {
                   .enter()
                   .append("circle")
                   .attr("cx", function(d,i) { return ((i % (numProds/3)) + 1)*width/(numProds/3 + 1); })
-                  .attr("cy", function(d,i) { return Math.floor(i*3/numProds)*height/6 + height/5; })
-                  .attr("r", function(d,i) { return d/limit[i]*circleSize; })
+                  .attr("cy", function(d,i) { return Math.floor(i*3/numProds)*height/6 + circleHeight; })
                   .style("fill", function(d,i) { return colors(i % 20); })
-                  .style("stroke", "black");
+                  .style("stroke", "black")
+                  .attr("r", 0)
+                  .transition()
+                  .duration(500)
+                  .delay(function(d,i) { return i*50; })
+                  .attr("r", function(d,i) { return d/limit[i]*circleSize; })
 
         solutionG.selectAll("text").remove("text");
         solutionG.append("text")
                  .attr("x", .2*width)
-                 .attr("y", .8*height)
+                 .attr("y", .9*height)
                  .text("Profit: " + String(Math.round(gains*100)/100) + "$");
         solutionG.append("text")
                  .attr("x", .2*width)
-                 .attr("y", .9*height)
+                 .attr("y", .94*height)
                  .text(Math.round(time*10)/10 + " hours of work of which " + Math.round(10*(time - hours[0]))/10 + " were overtime.");
     }
   }
