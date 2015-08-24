@@ -376,20 +376,21 @@
 // Hide Log File initially
 d3.select('#logfile').style("display", "none");
 
-//Width and height
+// Parameters
 var width = 800;
-var height = 500;
+var height = 600;
 var colors = d3.scale.category20();
 var numProds = 3*7;
 var circleSize = 20;
-var circleHeight = height/3;
+var circleHeight = .38*height;
+
+// Parameters for penalty function app
+var appHeight = .3*height;
+var appWidth = 300;
 
 // Initial data
-//var rate = [20,14,60,23,10];
 var rate = [];
-//var profit = [10,11,8,13,11];
 var profit = [];
-//var limit = [500,300,420,350,180];
 var limit = [];
 
 for (var i = 0; i < numProds; i++) {
@@ -400,6 +401,13 @@ for (var i = 0; i < numProds; i++) {
 
 var hours = [100,200,500]; // limithours, maxhours, penalty
 
+
+/*
+ *
+ * Set up svg and G objects
+ *
+ */
+
 var svg = d3.select("#demoarea")
               .append("svg")
               .attr("width", width)
@@ -408,8 +416,17 @@ var svg = d3.select("#demoarea")
 // G object for background
 var backgroundG = svg.append("g");
 
+// G object for penalty app
+var appG = svg.append("g");
+
 // G object for solution
 var solutionG = svg.append("g");
+
+/*
+ *
+ * Background
+ *
+ */
 
 backgroundG.append("rect")
            .attr("x",0)
@@ -455,6 +472,56 @@ backgroundG.selectAll(".limit")
 
 backgroundG.selectAll("text").attr("text-anchor", "middle")
           .attr("font-size", 10).attr("font-family", "Helvetica Neue");
+
+/*
+ *
+ * Penalty function app
+ *
+ */
+
+// X and y axes
+backgroundG.append("line").attr("x1", width/2 - appWidth/2).attr("y1", 1.05*appHeight)
+                          .attr("x2", width/2 + appWidth/2).attr("y2", 1.05*appHeight)
+                          .style("stroke", "black");
+backgroundG.append("line").attr("x1", width/2 - appWidth/2).attr("y1", 1.05*appHeight)
+                          .attr("x2", width/2 - appWidth/2).attr("y2", 0.05*appHeight)
+                          .style("stroke", "black");
+
+// Initial points
+var p1 = [width/2, 1.05*appHeight];
+var p2 = [width/2 + appWidth/2, .5*appHeight];
+
+// For dragging
+var drag = d3.behavior.drag()
+             .on("drag", dragmove);
+
+reline();
+
+function reline() {
+  appG.selectAll("circle").remove("circle");
+  appG.selectAll("line").remove("line");
+  appG.append("line").attr("x1", p1[0]).attr("y1", p1[1]).attr("x2", p2[0]).attr("y2", p2[1]);
+  appG.append("line").attr("x1", width/2 - appWidth/2).attr("y1", p1[1]).attr("x2", p1[0]).attr("y2", p1[1]);
+  appG.selectAll("line").style("stroke", "rgb(0,0,200)").style("stroke-width", 3);
+  appG.append("circle").attr("cx", p1[0]).attr("cy", p1[1]).attr("r", 8)
+      .attr("id", "point1").call(drag);
+  appG.append("circle").attr("cx", p2[0]).attr("cy", p2[1]).attr("r", 8)
+      .attr("id", "point2").call(drag);
+}
+
+function dragmove(d) {
+  if (d3.select(this).attr("id") === "point1") {
+    p1[0] = d3.event.x;
+  } else {
+    p2[1] = d3.event.y;
+  }
+  reline();
+}
+/*
+ *
+ * Optimization
+ *
+ */
 
 function compute() {
   d3.json('/pwlExample.py')
