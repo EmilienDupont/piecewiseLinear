@@ -220,11 +220,10 @@
       </p>
 
       <p>
-        For each product, we let the variable $x_i$ denote the amount of
-        product $i$ we produce (in units of tonnes). The profit, is then
-        given by
+        For each product i, we let the variable $x_i$ denote the amount of
+        we produce (in units of tonnes). The profit, is then given by
         \[
-        \ \text{profit} = sum_{i \in P} p_i x_i
+        \ \text{profit} = \sum_{i \in P} p_i x_i
         \]
       </p>
 
@@ -239,8 +238,27 @@
       <p>
         Furthermore, there is a limit of the amount of time the factory can
         run. We denote this by $t_{lim}$. Since $x_i$ tonnes of each product
-        $i$ is produced at a rate $r_i$, the total amount of work hours is given
-        by
+        $i$ is produced at a rate of $r_i$ tonnes per hour, the total amount
+        of work hours is given by
+        \[
+        \ \text{work hours} = \sum_{i \in P} \frac{x_i}{a_i}
+        \]
+      </p>
+
+      <p>
+        To impose the time limit we could then add the constraint $\text{work hours}
+        leq t_{lim}$. In reality, however, it is often the case that we can
+        run the factory beyond the time limit, i.e. work overtime. Overtime work
+        is more expensive, so we introduce a penalty cost $c$. Therefore, if the
+        factory runs for less than $t_{lim}$ hours, we pay no penalty, but if it
+        goes beyond, we pay a penalty for the extra hours. This can be represented
+        by a piecewise linear function of time:
+        \[
+        \ f(t) = \left\{\begin{array}{ll}
+              0 & \text{if } t \leq t_{lim} \\
+              c(t-t_{lim}) & \text{if } t > t_{lim}
+             \end{array}\right.
+        \]
       </p>
 
     </div>
