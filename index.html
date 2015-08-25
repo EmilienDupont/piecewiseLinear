@@ -383,6 +383,7 @@ var colors = d3.scale.category20();
 var numProds = 3*7;
 var circleSize = 20;
 var circleHeight = .42*height;
+var numFormat = d3.format(',');
 
 // Parameters for penalty function app
 var appHeight = .3*height;
@@ -510,6 +511,7 @@ backgroundG.append("text").attr("text-anchor", "middle").attr("y", .6*appHeight)
                           .text("25,000$").attr("font-size", 12);
 
 backgroundG.selectAll("text").attr("font-family", "Helvetica Neue");
+
 // Initial points
 var p1 = [width/2, 1.05*appHeight];
 var p2 = [width/2 + appWidth/2, .5*appHeight];
@@ -556,6 +558,14 @@ function dragmove(d) {
  * Optimization
  *
  */
+
+function posPart(x) {
+  if (x > 0) {
+    return x;
+  } else {
+    return 0;
+  }
+}
 
 function compute() {
   limithours = (p1[0] - (width/2 - appWidth/2))*200/appWidth;
@@ -605,11 +615,11 @@ function serverResponse(error, data) {
         solutionG.append("text")
                  .attr("x", .5*width)
                  .attr("y", .94*height)
-                 .text("Profit: " + String(Math.round(gains*100)/100) + "$");
+                 .text("Profit: " + String(numFormat(Math.round(gains*100)/100)) + "$");
         solutionG.append("text")
                  .attr("x", .5*width)
                  .attr("y", .9*height)
-                 .text(Math.round(time*10)/10 + " hours of work of which " + Math.round(10*(time - Math.floor(limithours)))/10 + " were overtime.");
+                 .text(Math.round(time*10)/10 + " hours of work of which " + posPart(Math.round(10*(time - Math.floor(limithours)))/10) + " were overtime.");
         solutionG.selectAll("text").attr("text-anchor", "middle")
                  .attr("font-size", 20).attr("font-family", "Helvetica Neue");
     }
