@@ -366,12 +366,53 @@
         Gurobi's Python interface:
       </p>
       <examplecode>
-      Gurobi Code
+          # Example data
+          rate = [50,40]; profit = [25,32]; limit = [1200,920];
+          limithours = 20; maxhours = 40; penalty = 100;
+
+          n = len(rate) # number of products
+
+          m = Model()
+
+          # Add variables
+          x = {}
+
+          for i in range(n):
+              x[i] = m.addVar(ub = limit[i], vtype=GRB.CONTINUOUS, name="x%d" % i)
+
+          t = m.addVar(vtype=GRB.CONTINUOUS, name="t")
+
+          m.update()
+
+          # Add constraints
+          m.addConstr(t == quicksum( x[j]/rate[j] for j in range(n)))
+
+          m.addConstr(t <= maxhours)
+
+          # Set objective
+          m.setObjective( quicksum(profit[i]*x[i] for i in range(n)), GRB.MAXIMIZE)
+
+          # Set piecewise linear objective
+          nPts = 101
+          ti = []
+          fi = []
+          lb = 0
+          ub = maxhours;
+
+          for i in range(nPts):
+              ti.append(lb + (ub - lb) * i / (nPts - 1))
+              fi.append(-f(ti[i], limithours, penalty))
+
+          m.setPWLObj(t, ti, fi)
+
+          m.optimize()
       </examplecode>
     </div>
     <div class="example_section" id="demo">
       <h2><a href="#demo" name="demo">Live Demo</a></h2>
 
+      <p> Add demo description </p>
+      
       <div id="demoarea">
       </div>
       <button class="pure-button" onclick="compute()">Compute</button>
@@ -499,7 +540,7 @@ backgroundG.selectAll(".profit")
            .append("text")
            .attr("x", function(d,i) { return ((i % (numProds/3)) + 1)*width/(numProds/3 + 1); })
            .attr("y", function(d,i) { return Math.floor(i*3/numProds)*height/6 + circleHeight + 2.2*circleSize; })
-           .text(function(d) { return d + " $/hr"});
+           .text(function(d) { return d + " $/T"});
 
 backgroundG.selectAll(".limit")
            .data(limit)
