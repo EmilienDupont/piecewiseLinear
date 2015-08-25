@@ -38,7 +38,7 @@
         <subtitle>with piecewise linear objectives and Gurobi</subtitle>
     </div>
     <p>
-      In this example we'll solve a simple production planning problem
+      In this example we'll solve a simple production scheduling problem
       and demonstrate the use of piecewise linear objectives in Gurobi.
     </p>
 
@@ -49,7 +49,7 @@
     </p>
 
     <p>
-      Although your own business may not involve production planning, the
+      Although your own business may not involve production scheduling, the
       same basic techniques used in this example can be used for many other
       applications.
     </p>
@@ -57,22 +57,14 @@
     <div class="example_section" id="problem">
       <h2><a href="#problem" name="problem">Problem Description</a></h2>
       <p>
-        Before presenting the example, we quickly review piecewise linear
-        functions.
-      </p>
-
-      <p>
-        Piecewise linear functions can be used to approximate arbitrary
-        (nonlinear) functions.
-      </p>
-
-      <p>
-        As an example, the function
+        Before presenting the example, we briefly review piecewise linear
+        functions. Piecewise linear functions can be used to approximate
+        arbitrary (nonlinear) functions. As an example, the function
         \[
         \ f(x) = -(x - 2.5)^2 + \sin (kx) + 3
         \]
         and its piecewise linear approximation are shown on the visualization
-        below. You can vary the parameter $k$ and number of sample points $n$
+        below. You can vary number of sample points $n$ and the parameter $k$
         to see how the piecewise linear approximation changes.
       </p>
 
@@ -206,7 +198,7 @@
     <p>
       The function $f(x)$ is not convex. But $f(x)$ can still be
       minimized/maximized with Gurobi by invoking <a href="http://www.gurobi.com/documentation/6.0/refman/py_model_setpwlobj.html">
-      piecewise linear objectives. </a>
+      piecewise linear objectives</a>.
       The problem will be transformed to a MIP and solved. If $f(x)$ is convex,
       the model is transformed to an LP and solved.
     </p>
@@ -247,6 +239,10 @@
       <h2><a href="#model" name="model">Mathematical Model</a></h2>
 
       <p>
+        Let us now describe a mathematical model for our problem.
+      </p>
+
+      <p>
         Let $P$ be the set of products the factory produces. With each
         product $i$ we associate
         <ul>
@@ -278,18 +274,18 @@
         $i$ is produced at a rate of $r_i$ tonnes per hour, the total amount
         of work hours is given by
         \[
-        \ \text{work hours} = \sum_{i \in P} \frac{x_i}{a_i}
+        \ \text{time} = \sum_{i \in P} \frac{x_i}{a_i}
         \]
       </p>
 
       <p>
-        To impose the time limit we could then add the constraint $\text{work hours}
+        To impose the time limit we could then add the constraint $time
         \leq t_{lim}$. In reality, however, it is often the case that we can
         run the factory beyond the time limit, i.e. work overtime. Overtime work
-        is more expensive, so we introduce a penalty cost $c$. Therefore, if the
-        factory runs for less than $t_{lim}$ hours, we pay no penalty, but if it
-        goes beyond, we pay a penalty for the extra hours. This can be represented
-        by a piecewise linear function of time:
+        is more expensive, so we introduce a penalty cost $c$ per hour. Therefore,
+        if the factory runs for less than $t_{lim}$ hours, we pay no penalty, but
+        if it goes beyond, we pay a penalty for the extra hours. This can be
+        represented by a piecewise linear function of time:
         \[
         \ f(t) = \left\{\begin{array}{ll}
               0 & \text{if } t \leq t_{lim} \\
@@ -332,14 +328,14 @@
         \[
         \ t = \sum_{i \in P} \frac{x_i}{a_i}
         \]
-        And we update the profit
+        And we update the profit to include overtime costs
         \[
         \ \text{profit} = \sum_{i \in P} p_i x_i - f(t)
         \]
       </p>
 
       <p>
-        Since we may want to limit the hours of overtime, we add a last constraint
+        Since we may want to limit the hours of overtime, we add a last (hard) constraint
         \[
         \ t \leq t_{max}
         \]
@@ -366,53 +362,53 @@
         Gurobi's Python interface:
       </p>
       <examplecode>
-          # Example data
-          rate = [50,40]; profit = [25,32]; limit = [1200,920];
-          limithours = 20; maxhours = 40; penalty = 100;
+# Example data
+rate = [50,40]; profit = [25,32]; limit = [1200,920];
+limithours = 20; maxhours = 40; penalty = 100;
 
-          n = len(rate) # number of products
+n = len(rate) # number of products
 
-          m = Model()
+m = Model()
 
-          # Add variables
-          x = {}
+# Add variables
+x = {}
 
-          for i in range(n):
-              x[i] = m.addVar(ub = limit[i], vtype=GRB.CONTINUOUS, name="x%d" % i)
+for i in range(n):
+    x[i] = m.addVar(ub = limit[i], vtype=GRB.CONTINUOUS, name="x%d" % i)
 
-          t = m.addVar(vtype=GRB.CONTINUOUS, name="t")
+t = m.addVar(vtype=GRB.CONTINUOUS, name="t")
 
-          m.update()
+m.update()
 
-          # Add constraints
-          m.addConstr(t == quicksum( x[j]/rate[j] for j in range(n)))
+# Add constraints
+m.addConstr(t == quicksum( x[j]/rate[j] for j in range(n)))
 
-          m.addConstr(t <= maxhours)
+m.addConstr(t <= maxhours)
 
-          # Set objective
-          m.setObjective( quicksum(profit[i]*x[i] for i in range(n)), GRB.MAXIMIZE)
+# Set objective
+m.setObjective( quicksum(profit[i]*x[i] for i in range(n)), GRB.MAXIMIZE)
 
-          # Set piecewise linear objective
-          nPts = 101
-          ti = []
-          fi = []
-          lb = 0
-          ub = maxhours;
+# Set piecewise linear objective
+nPts = 101
+ti = []
+fi = []
+lb = 0
+ub = maxhours;
 
-          for i in range(nPts):
-              ti.append(lb + (ub - lb) * i / (nPts - 1))
-              fi.append(-f(ti[i], limithours, penalty))
+for i in range(nPts):
+    ti.append(lb + (ub - lb) * i / (nPts - 1))
+    fi.append(-f(ti[i], limithours, penalty))
 
-          m.setPWLObj(t, ti, fi)
+m.setPWLObj(t, ti, fi)
 
-          m.optimize()
+m.optimize()
       </examplecode>
     </div>
     <div class="example_section" id="demo">
       <h2><a href="#demo" name="demo">Live Demo</a></h2>
 
       <p> Add demo description </p>
-      
+
       <div id="demoarea">
       </div>
       <button class="pure-button" onclick="compute()">Compute</button>
