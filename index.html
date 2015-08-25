@@ -382,7 +382,7 @@ var height = 600;
 var colors = d3.scale.category20();
 var numProds = 3*7;
 var circleSize = 20;
-var circleHeight = .38*height;
+var circleHeight = .42*height;
 
 // Parameters for penalty function app
 var appHeight = .3*height;
@@ -399,7 +399,6 @@ for (var i = 0; i < numProds; i++) {
   limit.push(300 + Math.round(200*Math.random()));
 }
 
-//var hours = [100,200,500]; // limithours, maxhours, penalty
 var limithours;
 var maxhours = 200;
 var penalty;
@@ -481,6 +480,17 @@ backgroundG.selectAll("text").attr("text-anchor", "middle")
  *
  */
 
+// Penalty Function description
+backgroundG.append("text").attr("x", .02*width).attr("y", .3*appHeight)
+           .text("Penalty Cost Function").attr("font-size", 20)
+           .attr("font-weight", 600);
+backgroundG.append("text").attr("x", .02*width).attr("y", .45*appHeight)
+           .text("Drag the points around to");
+backgroundG.append("text").attr("x", .02*width).attr("y", .55*appHeight)
+           .text("change the shape of the");
+backgroundG.append("text").attr("x", .02*width).attr("y", .65*appHeight)
+           .text("function.");
+
 // X and y axes
 backgroundG.append("line").attr("x1", width/2 - appWidth/2).attr("y1", 1.05*appHeight)
                           .attr("x2", width/2 + appWidth/2).attr("y2", 1.05*appHeight)
@@ -488,7 +498,18 @@ backgroundG.append("line").attr("x1", width/2 - appWidth/2).attr("y1", 1.05*appH
 backgroundG.append("line").attr("x1", width/2 - appWidth/2).attr("y1", 1.05*appHeight)
                           .attr("x2", width/2 - appWidth/2).attr("y2", 0.05*appHeight)
                           .style("stroke", "black");
+backgroundG.append("text").attr("text-anchor", "middle").attr("y", 1.15*appHeight).attr("x", width/2 - appWidth/2)
+                          .text("0 hours").attr("font-size", 12);
+backgroundG.append("text").attr("text-anchor", "middle").attr("y", 1.15*appHeight).attr("x", width/2)
+                          .text("100 hours").attr("font-size", 12);
+backgroundG.append("text").attr("text-anchor", "middle").attr("y", 1.15*appHeight).attr("x", width/2 + appWidth/2)
+                          .text("200 hours").attr("font-size", 12);
+backgroundG.append("text").attr("text-anchor", "middle").attr("y", .15*appHeight).attr("x", .53*width - appWidth/2)
+                          .text("50,000$").attr("font-size", 12);
+backgroundG.append("text").attr("text-anchor", "middle").attr("y", .6*appHeight).attr("x", .53*width - appWidth/2)
+                          .text("25,000$").attr("font-size", 12);
 
+backgroundG.selectAll("text").attr("font-family", "Helvetica Neue");
 // Initial points
 var p1 = [width/2, 1.05*appHeight];
 var p2 = [width/2 + appWidth/2, .5*appHeight];
