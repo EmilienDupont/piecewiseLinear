@@ -34,8 +34,8 @@
   </ul>
   <div id="example_container">
     <div class="example_section" id="intro">
-      <h1>Piecewise Linear Objective</h1>
-        <subtitle>with integer programming and Gurobi</subtitle>
+      <h1>Production planning</h1>
+        <subtitle>with piecewise linear objectives and Gurobi</subtitle>
     </div>
     <p>
       In this example we'll solve a simple production planning problem
@@ -48,25 +48,44 @@
       visualize an optimal solution.
     </p>
 
+    <p>
+      Although your own business may not involve production planning, the
+      same basic techniques used in this example can be used for many other
+      applications.
+    </p>
+
     <div class="example_section" id="problem">
       <h2><a href="#problem" name="problem">Problem Description</a></h2>
       <p>
-        Piecewise linear functions can be used to approximate arbitrary
+        Before presenting the example, we quickly review piecewise linear
         functions.
       </p>
-      <p> Below is the function
-      \[
-      \ f(x) = -(x - 2.5)^2 + \sin (kx) + 3
-      \]
-      and its piecewise linear approximation.</p>
+
       <p>
-      <label for=nData> Number of sample points </label>
-      <input type="range" min = 3 max = 30 step = 1 id="nData" value="10" oninput="redraw()" class="slider-width">
+        Piecewise linear functions can be used to approximate arbitrary
+        (nonlinear) functions.
       </p>
+
       <p>
-      <label for=k> k </label>
-      <input type="range" min = 1 max = 5 step = 0.01 id="k" value="2" oninput="redraw()" class="slider-width">
+        As an example, the function
+        \[
+        \ f(x) = -(x - 2.5)^2 + \sin (kx) + 3
+        \]
+        and its piecewise linear approximation are shown on the visualization
+        below. You can vary the parameter $k$ and number of sample points $n$
+        to see how the piecewise linear approximation changes.
       </p>
+
+      <ul>
+	<li>
+          <label for=nData> $n$ </label>
+          <input type="range" min = 3 max = 30 step = 1 id="nData" value="10" oninput="redraw()" class="slider-width">
+        </li>
+        <li>
+          <label for=k> $k$ </label>
+          <input type="range" min = 1 max = 5 step = 0.01 id="k" value="2" oninput="redraw()" class="slider-width">
+        </li>
+      </ul>
 
       <div id="piecewisedemo">
       </div>
@@ -185,9 +204,17 @@
     </div>
 
     <p>
+      The function $f(x)$ is not convex. But $f(x)$ can still be
+      minimized/maximized with Gurobi by invoking <a href="http://www.gurobi.com/documentation/6.0/refman/py_model_setpwlobj.html">
+      piecewise linear objectives. </a>
+      The problem will be transformed to a MIP and solved. If $f(x)$ is convex,
+      the model is transformed to an LP and solved.
+    </p>
+
+    <p>
       Piecewise linear objectives also arise naturally in many different
-      applications. In this example, we will see how PWL objectives are
-      used to solve problems which involve <em>soft constraints</em>.
+      applications. In this example, we will see how piecewise linear objectives
+      are used to solve problems which involve <em>soft constraints</em>.
     </p>
 
     <p>
@@ -204,14 +231,15 @@
       we can go beyond the time limit but only if we pay a penalty cost. So
       if 55 hours of work were done in a week, 50 of those would be at no extra
       cost, while we pay a penalty of 100$/hour on the final 5 hours for
-      example.
+      example. This is a soft constraint, because it can be violated if a
+      penalty is payed.
     </p>
 
     <p>
       Piecewise linear objectives also arise in other contexts, e.g. in
       modelling
       <a href ="http://www.more.ms.unimelb.edu.au/students/operationsresearch/lecturenotes/620362_PiecewiseLinearModels.pdf">
-      reversible activites, piecewise linear costs, approximation of nonlinear
+      reversible activites, piecewise linear costs, approximating of nonlinear
       functions...</a>
     </p>
 
