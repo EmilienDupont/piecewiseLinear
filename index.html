@@ -210,10 +210,12 @@
     </p>
 
     <p>
-      We consider a factory which produces different types of items.
-      Each product has a cost and can be produced at a certain rate. The
-      goal is then to decide, given the demands for each item, which
-      amount of each item to produce to maximize the profit.
+      We consider a <a href="https://en.wikipedia.org/wiki/Pulp_and_paper_industry">
+      pulp and paper factory </a> which uses wood as a raw material to produce
+      different types of paper, cardboard and pulp. Each product has a cost and
+      can be produced at a certain rate. The goal is then to decide, given the
+      demands for each item, which amount of each item to produce to maximize
+      the profit.
     </p>
 
     <p>
@@ -246,17 +248,17 @@
         Let $P$ be the set of products the factory produces. With each
         product $i$ we associate
         <ul>
-          <li>$r_i$: the rate of production in tonnes per hour. </li>
-          <li>$p_i$: the profit per tonne of product. </li>
+          <li>$p_i$: the production rate in tonnes per hour. </li>
+          <li>$r_i$: the revenue per tonne of product. </li>
           <li>$l_i$: the maximum limit of product that can be produced (in tonnes). </li>
         </ul>
       </p>
 
       <p>
         We let the variable $x_i$ denote the amount of product $i$
-        we produce (in units of tonnes). The profit, is then given by
+        we produce (in units of tonnes). The revenue is then given by
         \[
-        \ \text{profit} = \sum_{i \in P} p_i x_i
+        \ \text{revenue} = \sum_{i \in P} r_i x_i
         \]
       </p>
 
@@ -271,10 +273,10 @@
       <p>
         Furthermore, there is a limit of the amount of time the factory can
         run. We denote this by $t_{lim}$. Since $x_i$ tonnes of each product
-        $i$ is produced at a rate of $r_i$ tonnes per hour, the total amount
+        $i$ is produced at a rate of $p_i$ tonnes per hour, the total amount
         of work hours is given by
         \[
-        \ \text{time} = \sum_{i \in P} \frac{x_i}{a_i}
+        \ \text{time} = \sum_{i \in P} \frac{x_i}{p_i}
         \]
       </p>
 
@@ -282,18 +284,19 @@
         To impose the time limit we could then add the constraint $time
         \leq t_{lim}$. In reality, however, it is often the case that we can
         run the factory beyond the time limit, i.e. work overtime. Overtime work
-        is more expensive, so we introduce a penalty cost $c$ per hour. Therefore,
-        if the factory runs for less than $t_{lim}$ hours, we pay no penalty, but
-        if it goes beyond, we pay a penalty for the extra hours. This can be
-        represented by a piecewise linear function of time:
+        is more expensive, so we introduce a penalty cost of $c$ dollars per hour,
+        in addition to the usual costs. Therefore, if the factory runs for less
+        than $t_{lim}$ hours, we pay the base cost $b$, but if it goes beyond, we
+        pay a penalty for the extra hours. This can be represented by a piecewise
+        linear cost function of time:
         \[
-        \ f(t) = \left\{\begin{array}{ll}
-              0 & \text{if } t \leq t_{lim} \\
-              c(t-t_{lim}) & \text{if } t > t_{lim}
+        \ \text{cost}(t) = \left\{\begin{array}{ll}
+              b & \text{if } t \leq t_{lim} \\
+              b + c(t-t_{lim}) & \text{if } t > t_{lim}
              \end{array}\right.
         \]
       </p>
-      <aside>Plot of $f(t)$, the piecewise linear penalty function.
+      <aside>Plot of $\text{cost}(t)$, the piecewise linear penalty function.
       </aside>
       <div id="penaltyfunction"></div>
       <script>
@@ -308,8 +311,8 @@
       var p2 = [.5*width, .8*height];
       var p3 = [.9*width, .2*height];
 
-      svg.append("line").attr("x1", p1[0]).attr("y1", p1[1]).attr("x2", p2[0]).attr("y2", p2[1]);
-      svg.append("line").attr("x1", p2[0]).attr("y1", p2[1]).attr("x2", p3[0]).attr("y2", p3[1]);
+      svg.append("line").attr("x1", p1[0]).attr("y1", p1[1] - height/5).attr("x2", p2[0]).attr("y2", p2[1] - height/5);
+      svg.append("line").attr("x1", p2[0]).attr("y1", p2[1] - height/5).attr("x2", p3[0]).attr("y2", p3[1]);
       svg.selectAll("line").style("stroke", "rgb(0,0,200)").style("stroke-width", 3);
       svg.append("line").attr("x1", p1[0]).attr("y1", 0).attr("x2", p1[0]).attr("y2", height)
          .style("stroke", "black");
@@ -326,16 +329,16 @@
         To incorporate the overtime penalty in our model, we introduce a variable $t$
         for time
         \[
-        \ t = \sum_{i \in P} \frac{x_i}{a_i}
+        \ t = \sum_{i \in P} \frac{x_i}{p_i}
         \]
-        And we update the profit to include overtime costs
+        And we define the profit to be
         \[
-        \ \text{profit} = \sum_{i \in P} p_i x_i - f(t)
+        \ \text{profit} = \text{revenue} - \text{cost} = \sum_{i \in P} r_i x_i - \text{cost}(t)
         \]
       </p>
 
       <p>
-        Since we may want to limit the hours of overtime, we add a last (hard) constraint
+        Since we may want to limit the hours of overtime, we add a final (hard) constraint
         \[
         \ t \leq t_{max}
         \]
@@ -346,9 +349,9 @@
         Finally, our optimization model becomes
         \[
        \begin{array}{ll}
-       \text{maximize} & {\displaystyle \sum_{i \in P} p_i x_i - f(t)} \\
+       \text{maximize} & {\displaystyle \sum_{i \in P} r_i x_i - \text{cost}(t)} \\
        \text{subject to} & {\displaystyle
-                            t = \sum_{i \in P} \frac{x_i}{a_i}} \\
+                            t = \sum_{i \in P} \frac{x_i}{p_i}} \\
                          & 0 \leq x_i \leq l_i \quad \forall i \in P \\
                          & t \leq t_{max}
        \end{array}
