@@ -4,15 +4,17 @@ from gurobipy import *
 import math
 import StringIO
 
+basecost = 10000
+
 def mycallback(model, where):
     if where == GRB.callback.MESSAGE:
         print >>model.__output, model.cbGet(GRB.callback.MSG_STRING),
 
 def f(x, limithours, penalty):
     if x < limithours:
-        return 0
+        return basecost
     else:
-        return (x-limithours)*penalty
+        return basecost + (x-limithours)*penalty
 
 def optimize(rate, profit, limit, hours, output=False):
     n = len(rate) # number of products

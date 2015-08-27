@@ -365,15 +365,15 @@
         Gurobi's Python interface:
       </p>
       <examplecode>
-# Example data
-rate = [50,40]; revenue = [25,32]; limit = [1200,920];
-limithours = 20; maxhours = 40; penalty = 100; basecost = 500;
-
 def cost(x, limithours, penalty):
     if x < limithours:
         return basecost
     else:
         return basecost + (x-limithours)*penalty
+
+# Example data
+rate = [50,40]; revenue = [25,32]; limit = [1200,920];
+limithours = 20; maxhours = 40; penalty = 100; basecost = 500;
 
 n = len(rate) # number of products
 
@@ -420,7 +420,7 @@ m.optimize()
 
       <p>
         Each product is represented by a circle, with the given production rate,
-        profit and production limit written below.
+        revenue and production limit written below.
       </p>
 
       <p>
@@ -611,7 +611,7 @@ backgroundG.append("text").attr("text-anchor", "middle").attr("y", .6*appHeight)
 backgroundG.selectAll("text").attr("font-family", "Helvetica Neue");
 
 // Initial points
-var p1 = [width/2, 1.05*appHeight];
+var p1 = [width/2, 0.90*appHeight];
 var p2 = [width/2 + appWidth/2, .5*appHeight];
 
 // For dragging
