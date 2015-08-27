@@ -366,8 +366,14 @@
       </p>
       <examplecode>
 # Example data
-rate = [50,40]; profit = [25,32]; limit = [1200,920];
-limithours = 20; maxhours = 40; penalty = 100;
+rate = [50,40]; revenue = [25,32]; limit = [1200,920];
+limithours = 20; maxhours = 40; penalty = 100; basecost = 500;
+
+def cost(x, limithours, penalty):
+    if x < limithours:
+        return basecost
+    else:
+        return basecost + (x-limithours)*penalty
 
 n = len(rate) # number of products
 
@@ -389,20 +395,20 @@ m.addConstr(t == quicksum( x[j]/rate[j] for j in range(n)))
 m.addConstr(t <= maxhours)
 
 # Set objective
-m.setObjective( quicksum(profit[i]*x[i] for i in range(n)), GRB.MAXIMIZE)
+m.setObjective( quicksum(revenue[i]*x[i] for i in range(n)), GRB.MAXIMIZE)
 
 # Set piecewise linear objective
 nPts = 101
 ti = []
-fi = []
+costi = []
 lb = 0
 ub = maxhours;
 
 for i in range(nPts):
     ti.append(lb + (ub - lb) * i / (nPts - 1))
-    fi.append(-f(ti[i], limithours, penalty))
+    costi.append(-cost(ti[i], limithours, penalty))
 
-m.setPWLObj(t, ti, fi)
+m.setPWLObj(t, ti, costi)
 
 m.optimize()
       </examplecode>
