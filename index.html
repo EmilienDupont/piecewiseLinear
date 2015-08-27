@@ -684,6 +684,10 @@ function serverResponse(error, data) {
         // Import solution and put it into correct format
         var sol = data['solution'];
         console.log('solution', sol);
+        if (sol[0] === "error") {
+          alert("10 second solve time limit exceeded.");
+          return;
+        }
         var solution = sol[0];
         var time = sol[1];
         var gains = sol[2];
