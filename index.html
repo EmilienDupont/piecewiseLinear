@@ -642,7 +642,7 @@ function dragmove(d) {
     }
   } else {
     var py = d3.event.y;
-    if (py < .05*appHeight || py > 1.05*appHeight) {
+    if (py < .05*appHeight || py > .90*appHeight) {
       return;
     } else {
       p2[1] = py;
