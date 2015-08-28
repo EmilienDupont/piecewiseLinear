@@ -670,7 +670,7 @@ function compute() {
   penalty = -(p2[1] - p1[1])/(p2[0] - p1[0])*500;
   console.log('limithours', limithours);
   console.log('penalty', penalty);
-  d3.json('/pwlExample.py')
+  d3.json('pwlExample.py')
     .header('Content-Type', 'application/json')
     .post(JSON.stringify({'rate': rate, 'profit': profit, 'limit': limit,
                          'hours': [limithours, maxhours, penalty]}), serverResponse);
