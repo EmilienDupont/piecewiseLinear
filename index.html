@@ -64,8 +64,8 @@
         \ f(x) = -(x - 2.5)^2 + \sin (kx) + 3
         \]
         and its piecewise linear approximation are shown on the visualization
-        below. You can vary number of sample points $n$ and the parameter $k$
-        to see how the piecewise linear approximation changes.
+        below. You can vary the number of sample points $n$ and the parameter
+        $k$ to see how the piecewise linear approximation changes.
       </p>
 
       <ul>
@@ -206,34 +206,32 @@
     <p>
       Piecewise linear objectives also arise naturally in many different
       applications. In this example, we will see how piecewise linear objectives
-      are used to solve problems which involve <em>soft constraints</em>.
+      are used to solve problems which involve <a href="https://en.wikipedia.org/wiki/Constrained_optimization">soft constraints</a>.
     </p>
 
     <p>
       We consider a <a href="https://en.wikipedia.org/wiki/Pulp_and_paper_industry">
-      pulp and paper factory </a> which uses wood as a raw material to produce
+      pulp and paper factory</a> which uses wood as a raw material to produce
       different types of paper, cardboard and pulp. Each product has a cost and
       can be produced at a certain rate. The goal is then to decide, given the
-      demands for each item, which amount of each item to produce to maximize
-      the profit.
+      demand, which amount of each item to produce to maximize the profit.
     </p>
 
     <p>
-      The amount of work hours is, however, limited. We could add a hard
-      constraint on the amount of work hours, for example limit the number
-      of work hours in a week to 50. In reality, it is often the case that
-      we can go beyond the time limit but only if we pay a penalty cost. So
+      The factory can, however, only run for a limited number of hours.
+      To model this, we could add a hard constraint: limit the number of work
+      hours in a week to 50, for example. In reality, it is often the case that
+      we can go beyond the time limit, but only if we pay overtime costs. So
       if 55 hours of work were done in a week, 50 of those would be at no extra
-      cost, while we pay a penalty of 100$/hour on the final 5 hours for
-      example. This is a soft constraint, because it can be violated if a
-      penalty is payed.
+      cost, while we pay a penalty of 100$/hour on the final 5 hours. This is a
+      soft constraint, because it can be violated if a penalty is payed.
     </p>
 
     <p>
       Piecewise linear objectives also arise in other contexts, e.g. in
       modelling
       <a href ="http://www.more.ms.unimelb.edu.au/students/operationsresearch/lecturenotes/620362_PiecewiseLinearModels.pdf">
-      reversible activites, piecewise linear costs, approximating of nonlinear
+      reversible activites, piecewise linear costs, approximating nonlinear
       functions...</a>
     </p>
 
