@@ -243,8 +243,8 @@
       </p>
 
       <p>
-        Let $P$ be the set of products the factory produces. With each
-        product $i$ we associate
+        Let $P$ be the set of products the factory produces (e.g. different
+        types of paper, cardboard etc...). With each product $i$ we associate
         <ul>
           <li>$p_i$: the production rate in tonnes per hour. </li>
           <li>$r_i$: the revenue per tonne of product. </li>
@@ -269,7 +269,7 @@
       </p>
 
       <p>
-        Furthermore, there is a limit of the amount of time the factory can
+        Furthermore, there is a limit on the amount of time the factory can
         run. We denote this by $t_{lim}$. Since $x_i$ tonnes of each product
         $i$ is produced at a rate of $p_i$ tonnes per hour, the total amount
         of work hours is given by
@@ -363,6 +363,8 @@
         Gurobi's Python interface:
       </p>
       <examplecode>
+from gurobipy import *
+
 def cost(x, limithours, penalty):
     if x < limithours:
         return basecost
