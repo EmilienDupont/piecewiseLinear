@@ -35,11 +35,11 @@
   <div id="example_container">
     <div class="example_section" id="intro">
       <h1>Production scheduling</h1>
-        <subtitle>with piecewise linear objectives and Gurobi</subtitle>
+        <subtitle>with piecewise-linear objectives and Gurobi</subtitle>
     </div>
     <p>
       In this example we'll solve a simple production scheduling problem
-      and demonstrate the use of piecewise linear objectives in Gurobi.
+      and demonstrate the use of piecewise-linear objectives in Gurobi.
     </p>
 
     <p>
@@ -57,15 +57,15 @@
     <div class="example_section" id="problem">
       <h2><a href="#problem" name="problem">Problem Description</a></h2>
       <p>
-        Before presenting the example, we briefly review piecewise linear
-        functions. Piecewise linear functions can be used to approximate
+        Before presenting the example, we briefly review piecewise-linear
+        functions. Piecewise-linear functions can be used to approximate
         arbitrary (nonlinear) functions. As an example, the function
         \[
         \ f(x) = -(x - 2.5)^2 + \sin (kx) + 3
         \]
-        and its piecewise linear approximation are shown on the visualization
+        and its piecewise-linear approximation are shown on the visualization
         below. You can vary the number of sample points $n$ and the parameter
-        $k$ to see how the piecewise linear approximation changes.
+        $k$ to see how the piecewise-linear approximation changes.
       </p>
 
       <ul>
@@ -198,14 +198,14 @@
     <p>
       The function $f(x)$ is not convex. But $f(x)$ can still be
       minimized/maximized with Gurobi by invoking <a href="http://www.gurobi.com/documentation/6.0/refman/py_model_setpwlobj.html">
-      piecewise linear objectives</a>.
+      piecewise-linear objectives</a>.
       The problem will be transformed to a MIP and solved. If $f(x)$ is convex,
       the model is directly solved as an LP.
     </p>
 
     <p>
-      Piecewise linear objectives also arise naturally in many different
-      applications. In this example, we will see how piecewise linear objectives
+      Piecewise-linear objectives also arise naturally in many different
+      applications. In this example, we will see how piecewise-linear objectives
       are used to solve problems which involve <a href="https://en.wikipedia.org/wiki/Constrained_optimization">soft constraints</a>.
     </p>
 
@@ -228,11 +228,11 @@
     </p>
 
     <p>
-      Piecewise linear objectives also arise in other contexts, e.g. in
+      Piecewise-linear objectives also arise in other contexts, for example in
       modelling
       <a href ="http://www.more.ms.unimelb.edu.au/students/operationsresearch/lecturenotes/620362_PiecewiseLinearModels.pdf">
-      reversible activites, piecewise linear costs, approximating nonlinear
-      functions...</a>
+      reversible activites, piecewise-linear costs, approximating nonlinear
+      functions, and many more.</a>
     </p>
 
     <div class="example_section" id="model">
@@ -244,7 +244,7 @@
 
       <p>
         Let $P$ be the set of products the factory produces (e.g. different
-        types of paper, cardboard etc...). With each product $i$ we associate
+        types of paper, cardboard, etc.). With each product $i$ we associate
         <ul>
           <li>$p_i$: the production rate in tonnes per hour. </li>
           <li>$r_i$: the revenue per tonne of product. </li>
@@ -285,8 +285,8 @@
         is more expensive, so we introduce a penalty cost of $c$ dollars per hour,
         in addition to the usual costs. Therefore, if the factory runs for less
         than $t_{lim}$ hours, we pay the base cost $b$, but if it goes beyond, we
-        pay a penalty for the extra hours. This can be represented by a piecewise
-        linear cost function of time:
+        pay a penalty for the extra hours. This can be represented by a piecewise-linear
+        cost function of time:
         \[
         \ \text{cost}(t) = \left\{\begin{array}{ll}
               b & \text{if } t \leq t_{lim} \\
@@ -294,7 +294,7 @@
              \end{array}\right.
         \]
       </p>
-      <aside>Plot of $\text{cost}(t)$, the piecewise linear penalty function.
+      <aside>Plot of $\text{cost}(t)$, the piecewise-linear penalty function.
       </aside>
       <div id="penaltyfunction"></div>
       <script>
@@ -336,7 +336,7 @@
       </p>
 
       <p>
-        Since we may want to limit the hours of overtime, we add a final (hard) constraint
+        Since we may want to limit the hours of overtime, we add a final constraint
         \[
         \ t \leq t_{max}
         \]
@@ -354,7 +354,7 @@
                          & t \leq t_{max}
        \end{array}
        \]
-       where the objective is a piecewise linear function.
+       where the objective is a piecewise-linear function.
       </p>
     </div>
     <div class="example_section" id="implementation">
@@ -424,7 +424,7 @@ m.optimize()
       </p>
 
       <p>
-        You can modify the piecewise linear penalty function by dragging the
+        You can modify the piecewise-linear penalty function by dragging the
         points on the graph.
       </p>
 
