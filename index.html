@@ -205,9 +205,9 @@
     </p>
 
     <p>
-      Piecewise-linear objectives also arise naturally in many different
+      Piecewise-linear objectives arise naturally in many different
       applications. In this example, we will see how piecewise-linear objectives
-      are used to solve problems which involve <a href="https://en.wikipedia.org/wiki/Constrained_optimization">soft constraints</a>.
+      are used to solve problems that include <a href="https://en.wikipedia.org/wiki/Constrained_optimization">soft constraints</a>.
     </p>
 
     <p>
@@ -215,17 +215,18 @@
       pulp and paper factory</a> which uses wood as a raw material to produce
       different types of paper, cardboard and pulp. Each product has a cost and
       can be produced at a certain rate. The goal is then to decide, given the
-      demand, which amount of each item to produce to maximize the profit.
+      demand, the amount of each item to produce to maximize the profit.
     </p>
 
     <p>
-      The factory can, however, only run for a limited number of hours.
-      To model this, we could add a hard constraint: limit the number of work
-      hours in a week to 50, for example. In reality, it is often the case that
-      we can go beyond the time limit, but only if we pay overtime costs. So
-      if 55 hours of work were done in a week, 50 of those would be at no extra
-      cost, while we pay a penalty of 100$/hour on the final 5 hours. This is a
-      soft constraint, because it can be violated if a penalty is payed.
+      The factory can only run for a limited number of hours.  To
+      model this, we could add a hard constraint. For example,
+      limiting the number of work hours in a week to 50. In reality,
+      it is often the case that we can go beyond the time limit, but
+      only if we pay overtime costs. So if 55 hours of work were done
+      in a week, the first 50 would incur no extra cost, but we would
+      pay a penalty of 100 $/hour for the final 5 hours. This is a soft
+      constraint, because it can be violated if a penalty is payed.
     </p>
 
     <p>
@@ -241,57 +242,63 @@
 
       <p>
         Let us now describe a mathematical model for our problem.
-      </p>
-
-      <p>
         Let $P$ be the set of products the factory produces (e.g. different
         types of paper, cardboard, etc.). With each product $i$ we associate
+        the constants:
         <ul>
-          <li>$p_i$: the production rate in tonnes per hour. </li>
-          <li>$r_i$: the revenue per tonne of product. </li>
-          <li>$l_i$: the maximum limit of product that can be produced (in tonnes). </li>
+          <li>$p_i$: the production rate in tons per hour. </li>
+          <li>$r_i$: the revenue per ton of product. </li>
+          <li>$l_i$: the maximum limit of product, in tons, that can be produced. </li>
         </ul>
       </p>
 
       <p>
-        We let the variable $x_i$ denote the amount of product $i$
-        we produce (in units of tonnes). The revenue is then given by
+        We define a continuous variable $x_i$ that is the amount of product $i$
+        we produce. The revenue is then given by:
         \[
-        \ \text{revenue} = \sum_{i \in P} r_i x_i
+        \ \text{revenue} = \sum_{i \in P} r_i x_i.
         \]
       </p>
 
       <p>
-        Since we cannot produce "negative" amounts of product and we cannot
-        exceed the maximum limit, we add the constraint
+        Since the amount of each product we produce must be nonnegative, and we cannot
+        exceed the maximum limit of each product that produced, we have the following
+        constraints:
         \[
-        \ 0 \leq x_i \leq l_i \quad \forall i \in P
+        \ 0 \leq x_i \leq l_i, \quad \forall i \in P
         \]
       </p>
 
       <p>
         Furthermore, there is a limit on the amount of time the factory can
-        run. We denote this by $t_{lim}$. Since $x_i$ tonnes of each product
-        $i$ is produced at a rate of $p_i$ tonnes per hour, the total amount
-        of work hours is given by
+        run. We denote this by $t_{\mathrm{lim}}$. Since $x_i$ tons of product
+        $i$ is produced at a rate of $p_i$ tons per hour, the total amount
+        of working time is given by:
         \[
-        \ \text{time} = \sum_{i \in P} \frac{x_i}{p_i}
+        \ \text{time} = \sum_{i \in P} \frac{x_i}{p_i}.
         \]
+        Here we assume that the factory is only able to produce one product
+        at a time.
       </p>
 
       <p>
-        To impose the time limit we could then add the constraint $time
-        \leq t_{lim}$. In reality, however, it is often the case that we can
-        run the factory beyond the time limit, i.e. work overtime. Overtime work
-        is more expensive, so we introduce a penalty cost of $c$ dollars per hour,
-        in addition to the usual costs. Therefore, if the factory runs for less
-        than $t_{lim}$ hours, we pay the base cost $b$, but if it goes beyond, we
-        pay a penalty for the extra hours. This can be represented by a piecewise-linear
-        cost function of time:
+        To impose the time limit we could constrain the working time to
+        be less than the time limit $t_{\mathrm{lim}}$. However, as
+        mentioned before, we can run the factory beyond the time limit
+        if we pay for overtime. Overtime work is more expensive, so we
+        introduce a penalty cost of $c$ dollars per hour, in addition
+        to the usual costs.
+      </p>
+
+      <p>
+        Therefore, if the factory runs for less
+        than $t_{\mathrm{lim}}$ hours, we pay the base cost $b$, but if it goes
+        beyond, we pay a penalty for the extra hours. This can be
+        represented by a piecewise-linear cost function of time:
         \[
         \ \text{cost}(t) = \left\{\begin{array}{ll}
-              b & \text{if } t \leq t_{lim} \\
-              b + c(t-t_{lim}) & \text{if } t > t_{lim}
+              b & \text{if } t \leq t_{\mathrm{lim}} \\
+              b + c(t-t_{\mathrm{lim}}) & \text{if } t > t_{\mathrm{lim}}
              \end{array}\right.
         \]
       </p>
@@ -328,34 +335,34 @@
         To incorporate the overtime penalty in our model, we introduce a variable $t$
         for time
         \[
-        \ t = \sum_{i \in P} \frac{x_i}{p_i}
+        \ t = \sum_{i \in P} \frac{x_i}{p_i}.
         \]
-        And we define the profit to be
+        The pulp and paper factory's profit is given by:
         \[
-        \ \text{profit} = \text{revenue} - \text{cost} = \sum_{i \in P} r_i x_i - \text{cost}(t)
+        \ \text{profit} = \text{revenue} - \text{cost} = \sum_{i \in P} r_i x_i - \text{cost}(t).
         \]
       </p>
 
       <p>
         Since we may want to limit the hours of overtime, we add a final constraint
         \[
-        \ t \leq t_{max}
+        \ t \leq t_{max},
         \]
         where $t_{max}$ is the maximum amount of work hours.
       </p>
 
       <p>
-        Finally, our optimization model becomes
+        Thus, the production planning model for the pulp and paper factory is
         \[
        \begin{array}{ll}
        \text{maximize} & {\displaystyle \sum_{i \in P} r_i x_i - \text{cost}(t)} \\
        \text{subject to} & {\displaystyle
-                            t = \sum_{i \in P} \frac{x_i}{p_i}} \\
-                         & 0 \leq x_i \leq l_i \quad \forall i \in P \\
-                         & t \leq t_{max}
+                            t = \sum_{i \in P} \frac{x_i}{p_i}}, \\
+                         & 0 \leq x_i \leq l_i \quad \forall i \in P, \\
+                         & t \leq t_{max},
        \end{array}
        \]
-       where the objective is a piecewise-linear function.
+       where the $\mathrm{cost(t)}$ term in the objective is a piecewise-linear function.
       </p>
     </div>
     <div class="example_section" id="implementation">
@@ -367,7 +374,7 @@
 from gurobipy import *
 
 def cost(x, limithours, penalty):
-    if x < limithours:
+    if x &lt; limithours:
         return basecost
     else:
         return basecost + (x-limithours)*penalty
@@ -393,7 +400,7 @@ m.update()
 # Add constraints
 m.addConstr(t == quicksum( x[j]/rate[j] for j in range(n)))
 
-m.addConstr(t <= maxhours)
+m.addConstr(t &lt;= maxhours)
 
 # Set objective
 m.setObjective( quicksum(revenue[i]*x[i] for i in range(n)), GRB.MAXIMIZE)
@@ -749,7 +756,7 @@ function serverResponse(error, data) {
         solutionG.append("text")
                  .attr("x", .5*width)
                  .attr("y", .94*height)
-                 .text("Profit: " + String(numFormat(Math.round(gains*100)/100)) + "$");
+                 .text("Profit: $" + String(numFormat(Math.round(gains*100)/100)));
         solutionG.append("text")
                  .attr("x", .5*width)
                  .attr("y", .9*height)
